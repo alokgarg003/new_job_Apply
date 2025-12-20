@@ -10,11 +10,7 @@ from jobspy.google import Google
 from jobspy.indeed import Indeed
 from jobspy.linkedin import LinkedIn
 from jobspy.naukri import Naukri
-from jobspy.dice import Dice
-from jobspy.wellfound import Wellfound
-from jobspy.remoteok import RemoteOK
-from jobspy.weworkremotely import WeWorkRemotely
-from jobspy.remoterocketship import RemoteRocketship
+# Placeholder scrapers removed: Dice, Wellfound, RemoteOK, WeWorkRemotely, RemoteRocketship
 from jobspy.model import JobType, Location, JobResponse, Country
 from jobspy.model import SalarySource, ScraperInput, Site
 from jobspy.util import (
@@ -63,11 +59,6 @@ def scrape_jobs(
         Site.GLASSDOOR: Glassdoor,
         Site.GOOGLE: Google,
         Site.NAUKRI: Naukri,
-        Site.DICE: Dice,
-        Site.WELLFOUND: Wellfound,
-        Site.REMOTEOK: RemoteOK,
-        Site.WEWORKREMOTELY: WeWorkRemotely,
-        Site.REMOTE_ROCKETSHIP: RemoteRocketship,
     }
     set_logger_level(verbose)
     job_type = get_enum_from_value(job_type) if job_type else None

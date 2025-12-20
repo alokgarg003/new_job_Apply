@@ -5,7 +5,7 @@ A concise step-by-step introduction to run and extend the Alok Garg personalizat
 ---
 
 ## Quick summary (what the system does)
-- Phase 1 — Discovery: scrape job listing URLs from Indeed, LinkedIn, Google, Naukri, ZipRecruiter and new placeholder sites (Dice, Wellfound, RemoteOK, WeWorkRemotely, RemoteRocketship). Note: the new site modules are placeholders and may require Playwright or proxy configuration for production use.
+- Phase 1 — Discovery: scrape job listing URLs from Indeed, LinkedIn, Google, Naukri, ZipRecruiter. Note: Dice/Wellfound/remote-only boards were removed from this repository.
 - Phase 2 — Enrichment: fetch each job page, extract skills/experience/indicators, and score the job against Alok Garg's resume using a transparent evaluator.
 - Output: recruiter-ready CSV with match score, reasons, and missing skills to support application decisions.
 
@@ -68,7 +68,7 @@ Summary of discovery checks using the default keywords (Application Support vari
 
 - LinkedIn — OK ✅: returned ~10 listings and enrichment works end-to-end; appears in output CSVs.
 - Naukri — OK ✅: returned ~10 listings and enrichment works; `work_from_home_type` and `is_remote` are available for some jobs.
-- Wellfound / Dice / Remote boards — Placeholder: modules present but not fully implemented. Use Playwright or rotating proxies for sites that block bots; full scrapers will be implemented on request.
+- Wellfound / Dice / Remote boards — Removed from this repository. If you need support for these sites in future, I can add them on request (may require Playwright/proxies).
 - Glassdoor — Blocked / flaky ❌: known to use anti-bot measures; use Playwright/proxies for reliable scraping.
 - ZipRecruiter — No results for India ❌: ZipRecruiter primarily returns US/CA jobs; try `location='United States'` or use ZipRecruiter API for better coverage.
 - Google Jobs — No results for current combined query ❌: try simplified queries or different region; Google scraping is cursor-based and brittle for some queries.
@@ -77,7 +77,7 @@ Summary of discovery checks using the default keywords (Application Support vari
 Notes & next steps:
 - If you need Glassdoor or other blocked sites, add a Playwright mode or proxy layer and enable those scrapers explicitly.
 - To capture ZipRecruiter and Google coverage, re-run discovery with `location='United States'` (or region-specific queries) and/or simplify the {QUERY}.
-- Consider adding scrapers for Dice and Wellfound if those platforms are important for your workflows (they are not currently implemented in this repo).
+- Note: support for Dice, Wellfound, and remote-only boards was removed; contact me if you want them reintroduced.
 - The pipeline logs `Remote` and `Work From Home Type` where available — verify them via the debug dump (`*_debug.csv`) after runs.
 
 ---

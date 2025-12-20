@@ -4,9 +4,9 @@
 
 ## Features
 
-- Scrapes job postings from **LinkedIn**, **Indeed**, **Glassdoor**, **Google**, **ZipRecruiter**, **Dice**, **Wellfound**, **RemoteOK**, **WeWorkRemotely**, **RemoteRocketship** & **Naukri** concurrently
+- Scrapes job postings from **LinkedIn**, **Indeed**, **Glassdoor**, **Google**, **ZipRecruiter** & **Naukri** concurrently
 
-> **Note:** Bayt has been permanently removed from active scrapers due to persistent blocking; run `python scripts/remove_bayt_from_csv.py` to remove Bayt rows from the sample `jobs.csv` file.
+> **Note:** Bayt has been permanently removed from active scrapers due to persistent blocking; the example `jobs.csv` has been cleaned.
 - Aggregates the job postings in a dataframe
 - Proxies support to bypass blocking
 
@@ -125,21 +125,14 @@ df = run_personalized_pipeline(keywords, location='India', results_wanted=50, ou
 
 ### Output
 
-| id                     | site       | job_url                                                                 | title                                       | company                             | location               | date_posted | job_type | salary_source | interval | min_amount | max_amount | currency | is_remote | job_level | job_function | listing_type | emails | description                                                                 | company_industry | company_url | company_logo | company_url_direct | company_addresses | company_num_employees | company_revenue | company_description | skills | experience_range | company_rating | company_reviews_count | vacancy_count | work_from_home_type |
-|------------------------|------------|-------------------------------------------------------------------------|---------------------------------------------|-------------------------------------|------------------------|-------------|----------|---------------|----------|------------|------------|----------|-----------|-----------|--------------|--------------|--------|-----------------------------------------------------------------------------|------------------|-------------|--------------|--------------------|-------------------|------------------------|-----------------|---------------------|--------|------------------|----------------|-----------------------|---------------|---------------------|
-| bayt-593779292887847651 | bayt       | [link](https://www.bayt.com/en/lebanon/jobs/software-developer-beirut-5297605/) | Software Developer - Beirut                 | Adequate Resources                  | Beirut · Lebanon       |             |          |               |          |            |            |          |           |           |              |              |        |                                                                             |                  |             |              |                    |                   |                        |                 |                     |        |                  |                |                       |               |                     |
-| bayt-6644104264792287457 | bayt       | [link](https://www.bayt.com/en/india/jobs/microsoft-copilot-agent-developer-5296608/) | Microsoft Copilot Agent Developer           | Empathy Technologies                | Bengaluru · India      |             |          |               |          |            |            |          |           |           |              |              |        |                                                                             |                  |             |              |                    |                   |                        |                 |                     |        |                  |                |                       |               |                     |
-| bayt-7611479627097462454 | bayt       | [link](https://www.bayt.com/en/qatar/jobs/application-developer-5291017/) | Application Developer                       | Futureway Line                      | Doha · Qatar           |             |          |               |          |            |            |          |           |           |              |              |        |                                                                             |                  |             |              |                    |                   |                        |                 |                     |        |                  |                |                       |               |                     |
-| bayt-2430312494324618935 | bayt       | [link](https://www.bayt.com/en/uae/jobs/fsd-developer-5289297/)        | FSD Developer                               | Synechron                           | Dubai · UAE            |             |          |               |          |            |            |          |           |           |              |              |        |                                                                             |                  |             |              |                    |                   |                        |                 |                     |        |                  |                |                       |               |                     |
-| ... (truncated for brevity) | ...        | ...                                                                     | ...                                         | ...                                 | ...                    | ...         | ...      | ...           | ...      | ...        | ...        | ...      | ...       | ...       | ...          | ...          | ...    | ...                                                                         | ...              | ...         | ...          | ...                | ...               | ...                    | ...             | ...                 | ...    | ...              | ...            | ...                   | ...           | ...                 |
-| gd-1009707852379        | glassdoor  | [link](https://www.glassdoor.sg/job-listing/j?jl=1009707852379)        | Software Engineer (Front End)               | TEKsystems (Allegis Group Singapore Pte Ltd) | Singapore              | 2025-04-13  |          |               |          |            |            |          | No        |           |              | sponsored    |        | Collaborate with product team to implement user-friendly interfaces.        |                  |             |              |                    |                   |                        |                 |                     |        |                  |                |                       |               |                     |
+A sample set of output columns is available in `jobs.csv` — run the discovery/enrichment pipeline to generate your own example CSVs.
 
 ### Parameters for `scrape_jobs()`
 
 ```plaintext
 Optional
 ├── site_name (list|str): 
-|    linkedin, zip_recruiter, indeed, glassdoor, google, dice, wellfound, remoteok, weworkremotely, remoterocketship
+|    linkedin, zip_recruiter, indeed, glassdoor, google
 |    (default is all)
 │
 ├── search_term (str)
@@ -245,10 +238,6 @@ You can specify the following countries when searching on Indeed (use the exact 
 | Taiwan               | Thailand     | Turkey     | Ukraine        |
 | United Arab Emirates | UK*          | USA*       | Uruguay        |
 | Venezuela            | Vietnam*     |            |                |
-
-### **Wellfound (placeholder)**
-
-Wellfound (formerly AngelList) is added as a placeholder scraper. Implementation may require Playwright or site-specific handling. For now the module is present but returns no results until a full scraper is implemented.
 
 
 

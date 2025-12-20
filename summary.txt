@@ -1,11 +1,11 @@
 Let me summarize the repository and produce a ready-to-copy README-style description plus an “AI prompt” template so an AI or developer can recreate the project from the prompt alone. I’ll include architecture, file-by-file roles, usage examples, and suggested reproduction steps.## Project summary — high level ✅
-JobSpy is a Python job-scraper framework that concurrently scrapes multiple job boards (LinkedIn, Indeed, Glassdoor, Google Jobs, Naukri, ZipRecruiter, Dice, Wellfound, RemoteOK, WeWorkRemotely, RemoteRocketship). It standardizes the output into a pandas DataFrame of JobPost records and supports rotating proxies, TLS sessions, and optional richer LinkedIn fetches. It focuses on pragmatic scraping: per-site Scraper implementations, utility session/fingerprint helpers, and a simple runner script.
+JobSpy is a Python job-scraper framework that concurrently scrapes multiple job boards (LinkedIn, Indeed, Glassdoor, Google Jobs, Naukri, ZipRecruiter). It standardizes the output into a pandas DataFrame of JobPost records and supports rotating proxies, TLS sessions, and optional richer LinkedIn fetches. It focuses on pragmatic scraping: per-site Scraper implementations, utility session/fingerprint helpers, and a simple runner script.
 
 Key concepts & flow 🔁
 User calls scrape_jobs(...) (in __init__.py) with:
 site(s), search term, location, results_wanted, hours_old, proxies, etc.
 scrape_jobs converts parameters to a ScraperInput and runs site scrapers in parallel with ThreadPoolExecutor.
-Each site has a Scraper class (e.g., Glassdoor, Indeed, Dice, Wellfound), implementing scrape(scraper_input) and returning a JobResponse (list of JobPost).
+Each site has a Scraper class (e.g., Glassdoor, Indeed), implementing scrape(scraper_input) and returning a JobResponse (list of JobPost).
 Utilities handle sessions (TLS/client fingerprinting), rotating proxies, retries, logging, HTML -> Markdown conversion, email extraction, salary parsing, and output column ordering.
 Results are normalized and concatenated into a single DataFrame sorted by site/date; the runner writes CSV/Excel output.
 Files & structure (what each item does) 📁
@@ -20,7 +20,7 @@ util.py — session utilities (create_session using tls_client or requests), rot
 exception.py — custom exceptions per-scraper (e.g., GlassdoorException).
 Subpackages per site:
 glassdoor/ — GraphQL call flow, CSRF token extraction, query payloads and headers.
-Dice, Wellfound, RemoteOK, WeWorkRemotely, RemoteRocketship — placeholder scrapers added. Full implementations may require site-specific strategies (Playwright or proxies) and will be added on request.
+
 indeed/, linkedin/, google/, naukri/, ziprecruiter/ — site-specific scrape logic, constants, and parsing utilities.
 Running & reproducing ⚙️
 Basic: python main.py (or the CLI: python [main.py](http://_vscodecontentref_/42) --search "application support" --sites indeed,linkedin --output out.csv)
@@ -59,7 +59,7 @@ util.py:
 create_session(is_tls=True|False, proxies=None, has_retry=False) returning a session object (use tls_client.Session for TLSRotating, and requests.Session subclass for RequestsRotating with Retry adapter).
 create_logger(name) for consistent logging.
 rotating proxy helpers, markdown conversion helper, email/salary parsers, and desired_order columns list.
-Add a __init__.py for each site (glassdoor, indeed, linkedin, google, naukri, ziprecruiter, dice, wellfound, remoteok, weworkremotely, remoterocketship) with class SiteScraper(Scraper) that:
+Add a __init__.py for each site (glassdoor, indeed, linkedin, google, naukri, ziprecruiter) with class SiteScraper(Scraper) that:
 implements scrape(scraper_input) returning JobResponse(jobs=[JobPost(...)]),
 uses create_session and site-specific headers or GraphQL payloads (Glassdoor uses a GraphQL /graph POST and CSRF token; some sites use GET+BeautifulSoup; others may require JS/Playwright).
 Implement robust error logging on 403/429/5xx; provide suggestions to use proxies, headers, or headless browser mode.

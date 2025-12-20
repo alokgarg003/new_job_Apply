@@ -299,16 +299,7 @@ def map_str_to_site(site_name: str) -> Site:
     # common aliases
     if name == "ZIPRECRUITER":
         name = "ZIP_RECRUITER"
-    if name in ("WELLFOUND", "ANGELLIST", "ANGEL_LIST"):  # Wellfound (formerly AngelList)
-        name = "WELLFOUND"
-    if name in ("DICE",):
-        name = "DICE"
-    if name in ("REMOTEOK", "REMOTE_OK", "REMOTE-OK"):
-        name = "REMOTEOK"
-    if name in ("WEWORKREMOTELY", "WE_WORK_REMOTE", "WEWORKREMOTE"):
-        name = "WEWORKREMOTELY"
-    if name.replace("_", "") == "REMOTEROCKETSHIP":
-        name = "REMOTE_ROCKETSHIP"
+
     try:
         return Site[name]
     except KeyError:

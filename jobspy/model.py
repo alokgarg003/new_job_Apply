@@ -298,11 +298,6 @@ class Site(Enum):
     GLASSDOOR = "glassdoor"
     GOOGLE = "google"
     NAUKRI = "naukri"
-    DICE = "dice"
-    WELLFOUND = "wellfound"
-    REMOTEOK = "remoteok"
-    WEWORKREMOTELY = "weworkremotely"
-    REMOTE_ROCKETSHIP = "remoterocketship"
 
 
 class SalarySource(Enum):

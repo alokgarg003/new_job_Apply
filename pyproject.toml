@@ -5,11 +5,11 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 name = "python-jobspy"
 version = "1.1.80"
-description = "Job scraper for LinkedIn, Indeed, Glassdoor, ZipRecruiter and other job boards (Dice, Wellfound, RemoteOK)"
+description = "Job scraper for LinkedIn, Indeed, Glassdoor, ZipRecruiter and other job boards"
 authors = ["Cullen Watson <cullen@cullenwatson.com>", "Zachary Hampton <zachary@zacharysproducts.com>"]
 homepage = "https://github.com/cullenwatson/JobSpy"
 readme = "README.md"
-keywords = [ "jobs-scraper", "linkedin", "indeed", "glassdoor", "ziprecruiter", "dice", "wellfound", "remoteok", "weworkremotely", "remoterocketship", "naukri"]
+keywords = [ "jobs-scraper", "linkedin", "indeed", "glassdoor", "ziprecruiter", "naukri"]
 [[tool.poetry.packages]]
 include = "jobspy"
 
