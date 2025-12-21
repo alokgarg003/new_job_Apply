@@ -1,15 +1,30 @@
+# jobspy/pipeline.py
+"""
+Core pipeline for discovery (URL fetching) and enrichment (full job page + resume‑aware matching).
+"""
+
 from __future__ import annotations
 
 import logging
 import time
-from typing import List, Dict, Any
 from datetime import datetime
+from typing import List, Dict, Any, Optional
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from urllib.parse import urlparse, urlunparse
 
 import pandas as pd
-from jobspy import scrape_jobs
+from bs4 import BeautifulSoup
+
+from jobspy.model import JobPost, JobResponse, Site, ScraperInput, Location
+from jobspy.util import (
+    create_session,
+    create_logger,
+    markdown_converter,
+    extract_emails_from_text,
+    norm_text,
+)
+from jobspy.exception import JobScrapingException
 from jobspy.evaluator import ProfileMatchEvaluator
-from jobspy.model import JobPost, JobResponse, Site, Location
-from jobspy.util import create_session, create_logger, markdown_converter
 
 log = create_logger("Pipeline")
 
@@ -20,16 +35,18 @@ def discover_jobs(
     results_wanted: int = 100,
     sites: List[str] | None = None,
 ) -> List[Dict[str, Any]]:
-    """Phase 1: discover job listing URLs from Indeed and LinkedIn (by default).
-
-    Returns list of dicts containing job_url, site, title, company, location, date_posted
+    """
+    Phase 1: discover job listing URLs from selected job boards.
+    Returns list of dicts containing job_url, site, title, company, location, date_posted.
     """
     if sites is None:
-        # include supported discovery sites by default so pipeline returns broader coverage
-        # Note: Bayt is excluded from defaults due to persistent 403 responses; enable it explicitly if you can
+        # include supported discovery sites by default
         sites = ["indeed", "linkedin", "google", "naukri", "ziprecruiter"]
     search_term = " OR ".join([f'"{k}"' for k in keywords])
     log.info(f"Starting discovery for keywords={keywords} sites={sites}")
+
+    # Import the public scrape function
+    from jobspy import scrape_jobs
 
     df = scrape_jobs(
         site_name=sites,
@@ -44,29 +61,22 @@ def discover_jobs(
         return rows
 
     for _, row in df.iterrows():
-        rows.append(
-            {
-                "job_url": row.get("job_url"),
-                "site": row.get("site"),
-                "title": row.get("title"),
-                "company": row.get("company"),
-                "location": row.get("location"),
-                "date_posted": row.get("date_posted"),
-                # include any short description if scraper provided
-                "short_description": row.get("description"),
-                # include remote/hybrid indicators when present
-                "is_remote": row.get("is_remote"),
-                "work_from_home_type": row.get("work_from_home_type"),
-            }
-        )
+        rows.append({
+            "job_url": row.get("job_url"),
+            "site": row.get("site"),
+            "title": row.get("title"),
+            "company": row.get("company"),
+            "location": row.get("location"),
+            "date_posted": row.get("date_posted"),
+            "short_description": row.get("description"),
+            "is_remote": row.get("is_remote"),
+            "work_from_home_type": row.get("work_from_home_type"),
+        })
     return rows
 
 
 def validate_discovery_row(job_meta: Dict[str, Any]) -> tuple[bool, str | None]:
-    """Validate discovery meta row contains required fields.
-
-    Returns (True, None) if valid, otherwise (False, reason).
-    """
+    """Validate discovery meta row contains required fields."""
     if not job_meta:
         return False, "empty row"
     if not job_meta.get("job_url"):
@@ -76,26 +86,12 @@ def validate_discovery_row(job_meta: Dict[str, Any]) -> tuple[bool, str | None]:
     return True, None
 
 
-def make_debug_filename(base: str) -> str:
-    """Return a timestamped debug filename for a given base output file.
-
-    Example: 'alok_personalized.csv' -> 'alok_personalized_debug_20251220_182233.csv'
-    """
-    ts = datetime.now().strftime('%Y%m%d_%H%M%S')
-    return base.replace('.csv', f'_debug_{ts}.csv')
-
-
 def normalize_output_df(df: pd.DataFrame) -> pd.DataFrame:
-    """Normalize location dicts and list columns for CSV-friendly output.
-
-    - Convert location dicts or serialized dicts into human-readable "City, State, Country" strings
-    - Convert list-like fields (real lists or serialized list strings) into comma-separated strings
-    """
+    """Normalize location dicts and list columns for CSV‑friendly output."""
     import ast
 
     df = df.copy()
 
-    # Normalize 'location' column
     if "location" in df.columns:
         def _normalize_location(val):
             try:
@@ -113,10 +109,8 @@ def normalize_output_df(df: pd.DataFrame) -> pd.DataFrame:
                 return val
             except Exception:
                 return str(val)
-
         df["location"] = df["location"].apply(_normalize_location)
 
-    # Normalize list-like fields (both real lists and serialized list strings)
     def _normalize_list_cell(v):
         if isinstance(v, float) and pd.isna(v):
             return None
@@ -139,21 +133,18 @@ def normalize_output_df(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def enrich_job(job_meta: Dict[str, Any], timeout_seconds: int = 15) -> JobPost | None:
-    """Phase 2: fetch full job page and parse/enrich details and evaluate match.
-
+    """
+    Phase 2: fetch full job page and parse/enrich details and evaluate match.
     Returns a JobPost with enrichment fields populated.
     """
     url = job_meta.get("job_url")
     site = job_meta.get("site")
     title = job_meta.get("title")
     company = job_meta.get("company")
-
     evaluator = ProfileMatchEvaluator()
 
-    # Use a resilient requests session for enrichment fetches (timeouts and retries)
     session = create_session(is_tls=False, has_retry=False, clear_cookies=True)
     try:
-        # Some scrapers already included description; prefer that
         description = job_meta.get("short_description")
         if not description and url:
             log.info(f"Fetching job details for {url}")
@@ -170,20 +161,19 @@ def enrich_job(job_meta: Dict[str, Any], timeout_seconds: int = 15) -> JobPost |
             except Exception as e:
                 log.error(f"Error fetching {url}: {e}")
                 description = None
-        # Basic parse: convert to plain text / markdown for evaluation
+
         text = markdown_converter(description) if description else ""
 
         eval_res = evaluator.evaluate(text)
 
         # Build JobPost (keep original minimal fields for compatibility)
-        # Normalize location into a dict so pydantic can coerce it to Location
         loc_val = job_meta.get("location")
         if isinstance(loc_val, str):
             loc_field = {"city": loc_val}
         else:
             loc_field = loc_val
 
-        # Determine remote/hybrid signals (use discovery hints first, fall back to text heuristics)
+        # Determine remote/hybrid inference
         meta_is_remote = job_meta.get("is_remote")
         meta_wfh = job_meta.get("work_from_home_type")
         txt_lower = text.lower() if text else ""
@@ -197,7 +187,6 @@ def enrich_job(job_meta: Dict[str, Any], timeout_seconds: int = 15) -> JobPost |
             elif any(k in txt_lower for k in ("onsite", "on-site", "work from office")):
                 inferred_is_remote = False
 
-        # coerce meta_wfh to a string if it's a valid string value; guard against pandas' NaN (float)
         if isinstance(meta_wfh, str) and meta_wfh.strip():
             inferred_wfh = meta_wfh.strip()
         else:
@@ -238,7 +227,7 @@ def enrich_job(job_meta: Dict[str, Any], timeout_seconds: int = 15) -> JobPost |
             log.info(f"Remote status ({src}) for {title}: {inferred_is_remote}")
         if inferred_wfh is not None:
             src = "meta" if meta_wfh is not None else "inferred"
-            log.info(f"Work-from-home type ({src}) for {title}: {inferred_wfh}")
+            log.info(f"Work‑from‑home type ({src}) for {title}: {inferred_wfh}")
 
         return job_post
     except Exception as e:
@@ -252,6 +241,9 @@ def run_personalized_pipeline(
     results_wanted: int,
     output_file: str = "personalized_jobs.csv",
 ) -> pd.DataFrame:
+    """
+    Run discovery → enrichment → CSV output.
+    """
     discovery = discover_jobs(keywords=keywords, location=location, results_wanted=results_wanted)
     enriched_posts = []
     for meta in discovery:
@@ -262,7 +254,6 @@ def run_personalized_pipeline(
         post = enrich_job(meta)
         if post:
             enriched_posts.append(post)
-        # be polite
         time.sleep(0.5)
 
     if not enriched_posts:
@@ -273,61 +264,23 @@ def run_personalized_pipeline(
     rows = [p.dict() for p in enriched_posts]
     df = pd.DataFrame(rows)
 
-    # Use helper to normalize
+    # Normalize
     df = normalize_output_df(df)
 
-    # Write a debug dump with full columns for inspection — include timestamp to avoid overwrites
-    def _make_debug_filename(base: str) -> str:
-        ts = datetime.now().strftime('%Y%m%d_%H%M%S')
-        return base.replace('.csv', f'_debug_{ts}.csv')
-
-    debug_out = make_debug_filename(output_file)
-
-    # Ensure a predictable set of debug columns (add missing ones as None for schema consistency)
+    # Write a debug dump with full columns (timestamped)
+    debug_out = output_file.replace(".csv", f"_debug_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv")
     debug_cols = [
-        "id",
-        "title",
-        "company_name",
-        "location",
-        "site",
-        "job_url",
-        "job_url_direct",
-        "description",
-        "company_url",
-        "job_type",
-        "compensation",
-        "date_posted",
-        "emails",
-        "is_remote",
-        "listing_type",
-        "job_level",
-        "company_industry",
-        "company_addresses",
-        "company_num_employees",
-        "company_revenue",
-        "company_description",
-        "company_logo",
-        "banner_photo_url",
-        "job_function",
-        "skills",
-        "experience_range",
-        "company_rating",
-        "company_reviews_count",
-        "vacancy_count",
-        "work_from_home_type",
-        "key_skills",
-        "match_score",
-        "match_reasons",
-        "missing_skills",
-        "resume_alignment_level",
-        "why_this_job_fits",
+        "id", "title", "company_name", "location", "site", "job_url", "job_url_direct",
+        "description", "company_url", "job_type", "compensation", "date_posted", "emails",
+        "is_remote", "listing_type", "job_level", "company_industry", "company_addresses",
+        "company_num_employees", "company_revenue", "company_description", "company_logo",
+        "banner_photo_url", "job_function", "skills", "experience_range", "company_rating",
+        "company_reviews_count", "vacancy_count", "work_from_home_type", "key_skills",
+        "match_score", "match_reasons", "missing_skills", "resume_alignment_level", "why_this_job_fits",
     ]
-
     for c in debug_cols:
         if c not in df.columns:
             df[c] = None
-
-    # Reorder to put debug columns first, keep any extra columns after
     extra_cols = [c for c in df.columns if c not in debug_cols]
     df = df[debug_cols + extra_cols]
 
@@ -339,33 +292,19 @@ def run_personalized_pipeline(
 
     # Ensure output columns per spec
     cols = [
-        "title",
-        "company_name",
-        "location",
-        "site",
-        "job_url",
-        "experience_range",
-        "key_skills",
-        "match_score",
-        "why_this_job_fits",
-        "missing_skills",
-        "resume_alignment_level",
-        # remote/hybrid indicators
-        "is_remote",
-        "work_from_home_type",
+        "title", "company_name", "location", "site", "job_url", "experience_range",
+        "key_skills", "match_score", "why_this_job_fits", "missing_skills", "resume_alignment_level",
+        "is_remote", "work_from_home_type",
     ]
-    # Add site column if not present
     if "site" not in df.columns:
         df["site"] = None
 
-    # Reorder and write
     df_out = df[[c for c in cols if c in df.columns]]
     try:
         df_out.to_csv(output_file, index=False)
         log.info(f"Wrote personalized output to {output_file}")
     except Exception as e:
-        # fallback filename
-        alt = output_file.replace('.csv', '_final.csv')
+        alt = output_file.replace(".csv", "_final.csv")
         try:
             df_out.to_csv(alt, index=False)
             log.warning(f"Failed to write {output_file}; wrote to {alt} instead: {e}")

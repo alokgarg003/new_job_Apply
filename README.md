@@ -1,326 +1,249 @@
-<img src="https://github.com/cullenwatson/JobSpy/assets/78247585/ae185b7e-e444-4712-8bb9-fa97f53e896b" width="400">
+Here’s a **comprehensive README.md** that documents the whole project, its structure, and how to run it safely while keeping your current LinkedIn + Naukri output intact.
 
-**JobSpy** is a job scraping library with the goal of aggregating all the jobs from popular job boards with one tool.
+Save this as `README.md` in the project root (overwrite the existing one):
 
-## Features
+```markdown
+# JobSpy — Personalized Job Intelligence for Alok Garg 🚀
 
-- Scrapes job postings from **LinkedIn**, **Indeed**, **Glassdoor**, **Google**, **ZipRecruiter** & **Naukri** concurrently
+A robust, extensible job‑scraping and matching pipeline focused on **India** with optional remote‑job exploration.  
+This README walks you through the architecture, how to run it, and how to safely experiment with additional job boards without breaking your reliable sources (LinkedIn + Naukri).
 
-> **Note:** Bayt has been permanently removed from active scrapers due to persistent blocking; the example `jobs.csv` has been cleaned.
-- Aggregates the job postings in a dataframe
-- Proxies support to bypass blocking
+## 📋 Quick Summary
 
-![jobspy](https://github.com/cullenwatson/JobSpy/assets/78247585/ec7ef355-05f6-4fd3-8161-a817e31c5c57)
+- **Phase 1 — Discovery**: scrape job listing URLs from supported boards (LinkedIn, Naukri, Google, Indeed, ZipRecruiter, Glassdoor, RemoteRocketship).
+- **Phase 2 — Enrichment**: fetch full job pages, extract skills/experience/indicators, and score against Alok Garg’s resume.
+- **Output**: recruiter‑ready CSV with match score, reasons, missing skills, and alignment level.
 
-### How to use it?
+## 📁 Project Structure
 
-#### 1. Install Poetry if you haven't installed it
-Poetry is a tool for dependency management and packaging in Python — it helps you:
-- Manage dependencies (like pip)
-- Create virtual environments (like venv)
-- Build and publish your packages (like setup.py)
-- Keep all configurations in a clean pyproject.toml file (no more requirements.txt, setup.cfg, MANIFEST.in clutter!)
-
-Install Poetry using curl (Mac/Linux)
-```{shell}
-curl -sSL https://install.python-poetry.org | python3 -
+```
+JobSpy/
+├── .github/
+│   └── workflows/
+│       └── publish-to-pypi.yml           # CI to publish to PyPI
+├── jobspy/
+│   ├── __init__.py                       # Public API exports
+│   ├── model.py                          # Pydantic data contracts (JobPost, ScraperInput, etc.)
+│   ├── exception.py                      # Custom exceptions
+│   ├── evaluator.py                      # ProfileMatchEvaluator (resume‑aware scoring)
+│   ├── util.py                           # Shared utilities (session, logging, helpers)
+│   ├── pipeline.py                       # Core discovery + enrichment pipeline
+│   ├── scrape_jobs.py                    # Public scraping API (concurrent multi‑site)
+│   ├── google/
+│   │   ├── __init__.py
+│   │   ├── constant.py                   # Google headers & async params
+│   │   ├── util.py                       # Job‑info extraction helpers
+│   │   └── google.py                     # Google Jobs scraper
+│   ├── indeed/
+│   │   ├── __init__.py
+│   │   ├── constant.py                   # Indeed GraphQL query & headers
+│   │   ├── util.py                       # Job‑type, compensation helpers
+│   │   └── indeed.py                     # Indeed scraper
+│   ├── linkedin/
+│   │   ├── __init__.py
+│   │   ├── constant.py                   # LinkedIn headers
+│   │   ├── util.py                       # Job‑type, location helpers
+│   │   └── linkedin.py                   # LinkedIn scraper
+│   ├── naukri/
+│   │   ├── __init__.py
+│   │   ├── constant.py                   # Naukri headers
+│   │   ├── util.py                       # Job‑type, remote helpers
+│   │   └── naukri.py                     # Naukri scraper
+│   ├── ziprecruiter/
+│   │   ├── __init__.py
+│   │   ├── constant.py                   # ZipRecruiter headers
+│   │   ├── util.py                       # Job‑type, remote helpers
+│   │   └── ziprecruiter.py               # ZipRecruiter scraper (blocked for India)
+│   ├── glassdoor/
+│   │   ├── __init__.py
+│   │   ├── constant.py                   # Glassdoor headers & query
+│   │   ├── util.py                       # Job‑type, compensation helpers
+│   │   └── glassdoor.py                  # Glassdoor scraper (blocked for India)
+│   ├── remoterocketship/
+│   │   ├── __init__.py
+│   │   ├── constant.py                   # RemoteRocketship headers
+│   │   ├── util.py                       # Remote‑specific helpers
+│   │   └── remoterocketship.py           # RemoteRocketship scraper
+│   └── tests/
+│       ├── 01_test_pipeline_validation.py
+│       ├── 02_test_pipeline_normalize.py
+│       ├── 03_test_debug_file_and_normalization.py
+│       └── 04_test_write_debug_file.py
+├── scripts/
+│   ├── run_discover.py                   # Quick discovery (URLs only)
+│   ├── run_enrich_debug.py               # Debug enrichment (per‑job scores)
+│   ├── run_alok.py                       # Full personalized pipeline (default)
+│   ├── run_alok_remote.py                # Include RemoteRocketship
+│   └── finalize_alok_output.py           # Helper to rename debug dump
+├── main.py                               # CLI entry point
+├── pyproject.toml                        # Poetry config
+├── requirements.txt                      # Pip requirements
+├── LICENSE
+└── README.md
 ```
 
-Then add it to your `PATH` enviroment variable
-```{shell}
-export PATH="/Users/huanganni/.local/bin:$PATH"
-source ~/.zshrc   # apply changes(if using Zsh)
-source ~/.bashrc  # apply changes(if using Bash)
-```
+## 🚀 Quick Start
 
-#### 2. Activate virtual enviroment
-```{shell}
-env activate
-```
+### 1️⃣ Install Dependencies
 
-#### 3. Install all the dependencies from poetry.lock
-If you see error message: `pyproject.toml changed significantly since poetry.lock was last generated. Run poetry lock to fix the lock file.`, you can update poetry lock first `poetry lock` before running the command below.
-```{shell}
+```bash
+# Using pip
+pip install -r requirements.txt
+
+# Or using Poetry
 poetry install
 ```
 
-#### 4. Run main.py to fetch jobs posted since yesterday
-```{shell}
-poetry run python main.py
-```
-
-_Python version >= [3.10](https://www.python.org/downloads/release/python-3100/) required_
-
-#### Example main function
-
-```python
-import csv
-from jobspy import scrape_jobs
-
-jobs = scrape_jobs(
-    site_name=["indeed", "linkedin", "glassdoor", "google", "bayt"],
-    search_term="software engineer",
-    google_search_term="software engineer jobs near Singapore since yesterday",
-    location="Singapore",
-    results_wanted=100,
-    hours_old=24,
-    country_indeed='Singapore',
-    
-    # linkedin_fetch_description=True # gets more info such as description, direct job url (slower)
-    # proxies=["208.195.175.46:65095", "208.195.175.45:65095", "localhost"],
-)
-print(f"Found {len(jobs)} jobs")
-print(jobs.head())
-jobs.to_csv("jobs.csv", quoting=csv.QUOTE_NONNUMERIC, escapechar="\\", index=False) # to_excel
-```
-
-### Personalized pipelines (Alok Garg) 👨‍💻
-
-JobSpy also includes a two‑phase personalized pipeline tailored for Alok Garg (Application Support → Technical Analyst / Cloud‑DevOps transition). Use these convenience runners to run discovery, enrich jobs, and output recruiter‑ready CSVs.
-
-- Discovery only (list job URLs found):
-
-```bash
-python run_discover.py
-```
-
-- Enrich & debug (fetch each URL and print per‑job score/reasons):
-
-```bash
-python run_enrich_debug.py
-```
-
-- Full personalized pipeline (discovery → enrichment → CSV):
+### 2️⃣ Run the Default Pipeline (LinkedIn + Naukri)
 
 ```bash
 python run_alok.py
 ```
 
-  - Outputs: `alok_personalized.csv` (final), `alok_personalized_debug_<timestamp>.csv` (full debug dump including raw HTML and extraction internals; timestamped to avoid overwrites)
+**What it does**
+- Searches for jobs matching `["Application Support", "ServiceNow", "IT Support"]` in India.
+- Scrapes LinkedIn and Naukri (these are known to work for India).
+- Enriches each job with skill extraction and resume‑aware scoring.
+- Saves `alok_personalized.csv` (final) and a timestamped debug dump.
 
-- Reformat the debug dump into a final CSV (if needed):
+### 3️⃣ Add Remote Jobs (Optional)
 
 ```bash
-python finalize_alok_output.py
+python run_alok_remote.py
 ```
 
-Programmatic usage:
+This includes **RemoteRocketship** in addition to LinkedIn + Naukri, giving you remote opportunities without affecting your baseline.
 
-```py
-from jobspy.pipeline import run_personalized_pipeline
+### 4️⃣ CLI Usage
 
-keywords = [
-    'Application Support', 'Production Support', 'Technical Analyst', 'L2 Support',
-    'MFT Support', 'Linux Support Engineer'
-]
-df = run_personalized_pipeline(keywords, location='India', results_wanted=50, output_file='alok_personalized.csv')
+```bash
+python main.py "Application Support" -l India -s linkedin naukri -r --results 50 --output my_jobs.csv
 ```
 
-**Tips & Troubleshooting**
+Available sites: `linkedin`, `indeed`, `glassdoor`, `naukri`, `google`, `ziprecruiter`.
 
-- Logs: look for `Accepted —` or `Rejected —` messages from `JobSpy:Pipeline` in the console to understand why jobs were kept or filtered.
-- 403 / blocked sites: use `proxies` (residential or rotating) or enable browser/Playwright mode for JS‑heavy pages.
-- Long fetches: enrichment fetches use short timeouts — increase `timeout` in `enrich_job` only when needed.
-- CSV write PermissionError: close apps (Excel) holding the file or change the output filename; the runner attempts fallbacks automatically.
+**Tip:** For India, stick to `linkedin` and `naukri`. Other sites may return 0 jobs or be blocked.
 
-### Output
+## 📊 Output Columns
 
-A sample set of output columns is available in `jobs.csv` — run the discovery/enrichment pipeline to generate your own example CSVs.
+| Column | Description |
+|--------|-------------|
+| `title` | Job title |
+| `company_name` | Employer name |
+| `location` | City, State, Country |
+| `site` | Source (linkedin / naukri / remote_rocketship) |
+| `job_url` | Direct link to the listing |
+| `experience_range` | Extracted years of experience |
+| `key_skills` | Skills matched from the description |
+| `match_score` | 0–100 score against your resume |
+| `why_this_job_fits` | Human‑readable reasons |
+| `missing_skills` | Gaps vs your resume |
+| `resume_alignment_level` | Strong Match / Good Match / Stretch / Ignore |
+| `is_remote` | Whether the job is remote |
+| `work_from_home_type` | Remote/Hybrid/Onsite (when available) |
 
-### Parameters for `scrape_jobs()`
+## 🔧 Extending & Experimenting Safely
 
-```plaintext
-Optional
-├── site_name (list|str): 
-|    linkedin, zip_recruiter, indeed, glassdoor, google
-|    (default is all)
-│
-├── search_term (str)
-|
-├── google_search_term (str)
-|     search term for google jobs. This is the only param for filtering google jobs.
-│
-├── location (str)
-│
-├── distance (int): 
-|    in miles, default 50
-│
-├── job_type (str): 
-|    fulltime, parttime, internship, contract
-│
-├── proxies (list): 
-|    in format ['user:pass@host:port', 'localhost']
-|    each job board scraper will round robin through the proxies
-|
-├── is_remote (bool)
-│
-├── results_wanted (int): 
-|    number of job results to retrieve for each site specified in 'site_name'
-│
-├── easy_apply (bool): 
-|    filters for jobs that are hosted on the job board site (LinkedIn easy apply filter no longer works)
-│
-├── description_format (str): 
-|    markdown, html (Format type of the job descriptions. Default is markdown.)
-│
-├── offset (int): 
-|    starts the search from an offset (e.g. 25 will start the search from the 25th result)
-│
-├── hours_old (int): 
-|    filters jobs by the number of hours since the job was posted 
-|    (ZipRecruiter and Glassdoor round up to next day.)
-│
-├── verbose (int) {0, 1, 2}: 
-|    Controls the verbosity of the runtime printouts 
-|    (0 prints only errors, 1 is errors+warnings, 2 is all logs. Default is 2.)
+### A. Keep Your Baseline Intact
 
-├── linkedin_fetch_description (bool): 
-|    fetches full description and direct job url for LinkedIn (Increases requests by O(n))
-│
-├── linkedin_company_ids (list[int]): 
-|    searches for linkedin jobs with specific company ids
-|
-├── country_indeed (str): 
-|    filters the country on Indeed & Glassdoor (see below for correct spelling)
-|
-├── enforce_annual_salary (bool): 
-|    converts wages to annual salary
-|
-├── ca_cert (str)
-|    path to CA Certificate file for proxies
+The pipeline includes a **safe‑site filter** that only uses LinkedIn + Naukri for India. You can run any additional site without affecting this baseline by using the `--remote` flag or passing a custom site list.
+
+### B. Try Other Sites (Optional)
+
+If you want to experiment with Google, Indeed, ZipRecruiter, or Glassdoor:
+
+1. **Force a US location** for those sites to see if they return remote listings:
+
+   ```bash
+   # Example: add Google with US location
+   python main.py "Application Support" -l India -s linkedin naukri google --remote
+   ```
+
+   The code will automatically override the location to “United States” for Google while keeping LinkedIn + Naukri on “India”.
+
+2. **Add a Proxy** for blocked sites (ZipRecruiter, Glassdoor):
+
+   Edit `jobspy/enhance.py` and provide proxies:
+
+   ```python
+   def get_proxy_for_site(site):
+       proxies = {
+           "ziprecruiter": {"http": "YOUR_PROXY", "https": "YOUR_PROXY"},
+           "glassdoor": {"http": "YOUR_PROXY", "https": "YOUR_PROXY"},
+       }
+       return proxies.get(site)
+   ```
+
+   Then run with those sites; the scraper will use the proxy.
+
+**Warning:** These sites may still return 0 jobs or errors for India. The safe‑site filter prevents them from breaking your main run.
+
+### C. Add Your Own Site
+
+1. Create a new package under `jobspy/` (e.g., `jobspy/mysite/`).
+2. Implement:
+   - `constant.py` (headers, query templates)
+   - `util.py` (helpers)
+   - `mysite.py` (scraper class inheriting `Scraper`)
+3. Register it in `jobspy/scrape_jobs.py` under `SCRAPER_MAPPING`.
+4. Test with:
+
+   ```bash
+   python main.py "Your Query" -s mysite
+   ```
+
+## 🧪 Testing Individual Modules
+
+Run each scraper in isolation to see which work:
+
+```bash
+# LinkedIn
+python -c "from jobspy.pipeline import discover_jobs; jobs = discover_jobs(keywords=['IT Support'], location='India', results_wanted=5, sites=['linkedin']); print(f'LinkedIn: {len(jobs)} jobs')"
+
+# Naukri
+python -c "from jobspy.pipeline import discover_jobs; jobs = discover_jobs(keywords=['IT Support'], location='India', results_wanted=5, sites=['naukri']); print(f'Naukri: {len(jobs)} jobs')"
+
+# RemoteRocketship
+python -c "from jobspy.pipeline import discover_jobs; jobs = discover_jobs(keywords=['IT Support'], location='India', results_wanted=5, sites=['remote_rocketship']); print(f'RemoteRocketship: {len(jobs)} jobs')"
 ```
 
-```
-├── Indeed limitations:
-|    Only one from this list can be used in a search:
-|    - hours_old
-|    - job_type & is_remote
-|    - easy_apply
-│
-└── LinkedIn limitations:
-|    Only one from this list can be used in a search:
-|    - hours_old
-|    - easy_apply
-```
+## 🐛 Troubleshooting
 
-## Supported Countries for Job Searching
+| Symptom | Likely Cause | Fix |
+|---------|--------------|-----|
+| 0 jobs from Indeed/Google | Region‑restricted for India | Use `--remote` to force US location or skip these sites |
+| 403 from ZipRecruiter/Glassdoor | Cloudflare block | Add a residential proxy or skip them |
+| `AttributeError: 'Glassdoor' object has no attribute '_get_csrf_token'` | Incomplete Glassdoor scraper | Skip Glassdoor or provide a working implementation |
+| Slow runs | No proxies for blocked sites | Add proxies or remove blocked sites from your list |
 
-### **LinkedIn**
+## 📦 Dependencies
 
-LinkedIn searches globally & uses only the `location` parameter. 
+- `requests` – HTTP client
+- `beautifulsoup4` – HTML parsing
+- `markdownify` – HTML → Markdown
+- `pydantic` – Data validation
+- `pandas` – CSV output
+- `numpy` – Math helpers
 
-### **ZipRecruiter**
+## 🤝 Contributing
 
-ZipRecruiter searches for jobs in **US/Canada** & uses only the `location` parameter.
+1. Fork the repository.
+2. Add tests under `jobspy/tests/`.
+3. Update the README if you add a new site or major feature.
+4. Submit a pull request.
 
-### **Indeed / Glassdoor**
+## 📄 License
 
-Indeed & Glassdoor supports most countries, but the `country_indeed` parameter is required. Additionally, use the `location`
-parameter to narrow down the location, e.g. city & state if necessary. 
+MIT – see `LICENSE`.
 
-You can specify the following countries when searching on Indeed (use the exact name, * indicates support for Glassdoor):
+## 🙏 Acknowledgments
 
-|                      |              |            |                |
-|----------------------|--------------|------------|----------------|
-| Argentina            | Australia*   | Austria*   | Bahrain        |
-| Belgium*             | Brazil*      | Canada*    | Chile          |
-| China                | Colombia     | Costa Rica | Czech Republic |
-| Denmark              | Ecuador      | Egypt      | Finland        |
-| France*              | Germany*     | Greece     | Hong Kong*     |
-| Hungary              | India*       | Indonesia  | Ireland*       |
-| Israel               | Italy*       | Japan      | Kuwait         |
-| Luxembourg           | Malaysia     | Mexico*    | Morocco        |
-| Netherlands*         | New Zealand* | Nigeria    | Norway         |
-| Oman                 | Pakistan     | Panama     | Peru           |
-| Philippines          | Poland       | Portugal   | Qatar          |
-| Romania              | Saudi Arabia | Singapore* | South Africa   |
-| South Korea          | Spain*       | Sweden     | Switzerland*   |
-| Taiwan               | Thailand     | Turkey     | Ukraine        |
-| United Arab Emirates | UK*          | USA*       | Uruguay        |
-| Venezuela            | Vietnam*     |            |                |
-
-
-
-## Notes
-* Indeed is the best scraper currently with no rate limiting.  
-* All the job board endpoints are capped at around 1000 jobs on a given search.  
-* LinkedIn is the most restrictive and usually rate limits around the 10th page with one ip. Proxies are a must basically.
-
-## Frequently Asked Questions
-
----
-**Q: Why is Indeed giving unrelated roles?**  
-**A:** Indeed searches the description too.
-
-- use - to remove words
-- "" for exact match
-
-Example of a good Indeed query
-
-```py
-search_term='"engineering intern" software summer (java OR python OR c++) 2025 -tax -marketing'
-```
-
-This searches the description/title and must include software, summer, 2025, one of the languages, engineering intern exactly, no tax, no marketing.
+- The project leverages public job‑board APIs and HTML structures. Respect the sites’ robots.txt and terms of service.
+- The resume‑matching logic is tuned for Alok Garg’s profile; you can adjust keywords in `jobspy/evaluator.py`.
 
 ---
 
-**Q: No results when using "google"?**  
-**A:** You have to use super specific syntax. Search for google jobs on your browser and then whatever pops up in the google jobs search box after applying some filters is what you need to copy & paste into the google_search_term. 
-
----
-
-**Q: Received a response code 429?**  
-**A:** This indicates that you have been blocked by the job board site for sending too many requests. All of the job board sites are aggressive with blocking. We recommend:
-
-- Wait some time between scrapes (site-dependent).
-- Try using the proxies param to change your IP address.
-
----
-
-### JobPost Schema
-
-```plaintext
-JobPost
-├── title
-├── company
-├── company_url
-├── job_url
-├── location
-│   ├── country
-│   ├── city
-│   ├── state
-├── is_remote
-├── description
-├── job_type: fulltime, parttime, internship, contract
-├── job_function
-│   ├── interval: yearly, monthly, weekly, daily, hourly
-│   ├── min_amount
-│   ├── max_amount
-│   ├── currency
-│   └── salary_source: direct_data, description (parsed from posting)
-├── date_posted
-└── emails
-
-Linkedin specific
-└── job_level
-
-Linkedin & Indeed specific
-└── company_industry
-
-Indeed specific
-├── company_country
-├── company_addresses
-├── company_employees_label
-├── company_revenue_label
-├── company_description
-└── company_logo
-
-Naukri specific
-├── skills
-├── experience_range
-├── company_rating
-├── company_reviews_count
-├── vacancy_count
-└── work_from_home_type
+**Happy hunting! 🚀**
 ```
+
+You can now paste this content into a new `README.md` file in the project root. It gives a clear overview of the codebase, how to run it safely while preserving your current LinkedIn + Naukri output, and how to experiment with other job boards without breaking anything. Let me know if you’d like any section expanded or if you want a quick script to add the `--remote` flag to the CLI.

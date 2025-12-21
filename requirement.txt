@@ -1,0 +1,6 @@
+requests>=2.32.0
+beautifulsoup4>=4.12.3
+markdownify>=0.13.2
+pydantic>=2.9.2
+pandas>=2.2.3
+numpy>=2.0.2

@@ -1,109 +1,20 @@
-job_search_query = """
-    query GetJobData {{
-        jobSearch(
-        {what}
-        {location}
-        limit: 100
-        {cursor}
-        sort: RELEVANCE
-        {filters}
-        ) {{
-        pageInfo {{
-            nextCursor
-        }}
-        results {{
-            trackingKey
-            job {{
-            source {{
-                name
-            }}
-            key
-            title
-            datePublished
-            dateOnIndeed
-            description {{
-                html
-            }}
-            location {{
-                countryName
-                countryCode
-                admin1Code
-                city
-                postalCode
-                streetAddress
-                formatted {{
-                short
-                long
-                }}
-            }}
-            compensation {{
-                estimated {{
-                currencyCode
-                baseSalary {{
-                    unitOfWork
-                    range {{
-                    ... on Range {{
-                        min
-                        max
-                    }}
-                    }}
-                }}
-                }}
-                baseSalary {{
-                unitOfWork
-                range {{
-                    ... on Range {{
-                    min
-                    max
-                    }}
-                }}
-                }}
-                currencyCode
-            }}
-            attributes {{
-                key
-                label
-            }}
-            employer {{
-                relativeCompanyPageUrl
-                name
-                dossier {{
-                    employerDetails {{
-                    addresses
-                    industry
-                    employeesLocalizedLabel
-                    revenueLocalizedLabel
-                    briefDescription
-                    ceoName
-                    ceoPhotoUrl
-                    }}
-                    images {{
-                        headerImageUrl
-                        squareLogoUrl
-                    }}
-                    links {{
-                    corporateWebsite
-                }}
-                }}
-            }}
-            recruit {{
-                viewJobUrl
-                detailedSalary
-                workSchedule
-            }}
-            }}
-        }}
-        }}
-    }}
-    """
+# jobspy/indeed/constant.py
+"""
+Headers for Indeed public search pages.
+"""
 
-api_headers = {
-    "Host": "apis.indeed.com",
-    "content-type": "application/json",
-    "indeed-api-key": "161092c2017b5bbab13edb12461a62d5a833871e7cad6d9d475304573de67ac8",
-    "accept": "application/json",
-    "indeed-locale": "en-US",
+headers = {
+    "authority": "in.indeed.com",
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
     "accept-language": "en-US,en;q=0.9",
-    "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Indeed App 193.1",
-    "indeed-app-info": "appv=193.1; appid=com.indeed.jobsearch; osv=16.6.1; os=ios; dtype=phone",
+    "cache-control": "max-age=0",
+    "sec-ch-ua": '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": '"Windows"',
+    "sec-fetch-dest": "document",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-site": "none",
+    "sec-fetch-user": "?1",
+    "upgrade-insecure-requests": "1",
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
 }

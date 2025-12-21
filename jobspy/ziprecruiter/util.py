@@ -1,31 +1,71 @@
-from jobspy.model import JobType
+# jobspy/ziprecruiter/util.py
+from bs4 import BeautifulSoup
 
+from jobspy.model import JobType, Location
+from jobspy.util import get_enum_from_job_type
 
-def add_params(scraper_input) -> dict[str, str | int]:
-    params: dict[str, str | int] = {
-        "search": scraper_input.search_term,
-        "location": scraper_input.location,
-    }
-    if scraper_input.hours_old:
-        params["days"] = max(scraper_input.hours_old // 24, 1)
+def job_type_code(job_type_enum: JobType) -> str:
+    return {
+        JobType.FULL_TIME: "F",
+        JobType.PART_TIME: "P",
+        JobType.INTERNSHIP: "I",
+        JobType.CONTRACT: "C",
+        JobType.TEMPORARY: "T",
+    }.get(job_type_enum, "")
 
-    job_type_map = {JobType.FULL_TIME: "full_time", JobType.PART_TIME: "part_time"}
-    if scraper_input.job_type:
-        job_type = scraper_input.job_type
-        params["employment_type"] = job_type_map.get(job_type, job_type.value[0])
+def parse_job_type(soup_job_type: BeautifulSoup) -> list[JobType] | None:
+    h3_tag = soup_job_type.find(
+        "h3",
+        class_="description__job-criteria-subheader",
+        string=lambda text: "Employment type" in text,
+    )
+    employment_type = None
+    if h3_tag:
+        employment_type_span = h3_tag.find_next_sibling(
+            "span",
+            class_="description__job-criteria-text description__job-criteria-text--criteria",
+        )
+        if employment_type_span:
+            employment_type = employment_type_span.get_text(strip=True)
+            employment_type = employment_type.lower()
+            employment_type = employment_type.replace("-", "")
+    return [get_enum_from_job_type(employment_type)] if employment_type else []
 
-    if scraper_input.easy_apply:
-        params["zipapply"] = 1
-    if scraper_input.is_remote:
-        params["remote"] = 1
-    if scraper_input.distance:
-        params["radius"] = scraper_input.distance
+def parse_job_level(soup_job_level: BeautifulSoup) -> str | None:
+    h3_tag = soup_job_level.find(
+        "h3",
+        class_="description__job-criteria-subheader",
+        string=lambda text: "Seniority level" in text,
+    )
+    job_level = None
+    if h3_tag:
+        job_level_span = h3_tag.find_next_sibling(
+            "span",
+            class_="description__job-criteria-text description__job-criteria-text--criteria",
+        )
+        if job_level_span:
+            job_level = job_level_span.get_text(strip=True)
+    return job_level
 
-    return {k: v for k, v in params.items() if v is not None}
+def parse_company_industry(soup_industry: BeautifulSoup) -> str | None:
+    h3_tag = soup_industry.find(
+        "h3",
+        class_="description__job-criteria-subheader",
+        string=lambda text: "Industries" in text,
+    )
+    industry = None
+    if h3_tag:
+        industry_span = h3_tag.find_next_sibling(
+            "span",
+            class_="description__job-criteria-text description__job-criteria-text--criteria",
+        )
+        if industry_span:
+            industry = industry_span.get_text(strip=True)
+    return industry
 
-
-def get_job_type_enum(job_type_str: str) -> list[JobType] | None:
-    for job_type in JobType:
-        if job_type_str in job_type.value:
-            return [job_type]
-    return None
+def is_job_remote(title: dict, description: str, location: Location) -> bool:
+    remote_keywords = ["remote", "work from home", "wfh"]
+    location = location.display_location()
+    full_string = f'{title} {description} {location}'.lower()
+    is_remote = any(keyword in full_string for keyword in remote_keywords)
+    return is_remote

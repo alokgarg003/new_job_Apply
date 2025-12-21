@@ -1,7 +1,12 @@
+# jobspy/evaluator.py
+"""
+Resume‑aware job matching evaluator for personalized filtering.
+"""
+
 from __future__ import annotations
 
 import re
-from typing import List, Dict, Tuple
+from typing import List, Dict
 
 # Profile priorities for Alok Garg
 PRIMARY_SKILLS = [
@@ -57,12 +62,11 @@ def norm_text(text: str) -> str:
 class ProfileMatchEvaluator:
     """Evaluate a job description text against Alok Garg's profile.
 
-    Returns a dict with match_score (0-100), match_reasons (list[str]), missing_skills (list[str]),
-    key_skills_extracted (list[str]) and resume_alignment_level (one of: Strong Match, Good Match, Stretch Role, Ignore)
+    Returns a dict with match_score (0‑100), match_reasons (list[str]), missing_skills (list[str]),
+    key_skills_extracted (list[str]), and resume_alignment_level (Strong Match / Good Match / Stretch Role / Ignore).
     """
 
     def __init__(self):
-        # prepare compiled regex for experience
         self.exp_regex = re.compile(r"(?P<min>\d+)[+]?\s*[-–to]{0,3}\s*(?P<max>\d+)?\s*years?", re.I)
 
     def _extract_skills(self, text: str) -> List[str]:
@@ -94,7 +98,7 @@ class ProfileMatchEvaluator:
 
     def _detect_mft(self, text: str) -> bool:
         txt = norm_text(text)
-        mft_keys = ["mft", "goanywhere", "go-anywhere", "go anywhere", "managed file transfer", "fms", "ftg", "mft"]
+        mft_keys = ["mft", "goanywhere", "go-anywhere", "go anywhere", "managed file transfer", "fms", "ftg"]
         return any(k in txt for k in mft_keys)
 
     def _detect_cloud(self, text: str) -> List[str]:
@@ -108,11 +112,12 @@ class ProfileMatchEvaluator:
             clouds.append("GCP")
         return clouds
 
-    def _detect_support_signal(self, text: str) -> Tuple[bool, List[str]]:
+    def _detect_support_signal(self, text: str) -> tuple[bool, List[str]]:
         txt = norm_text(text)
         positives = []
-        support_keywords = ["production", "support", "incident", "l2", "l3", "troubleshoot", "root cause", "incident management", "problem management", "service desk", "ticket"]
-        dev_keywords = ["develop", "implementation", "design", "feature", "software engineer", "engineer -" ]
+        support_keywords = ["production", "support", "incident", "l2", "l3", "troubleshoot", "root cause",
+                           "incident management", "problem management", "service desk", "ticket"]
+        dev_keywords = ["develop", "implementation", "design", "feature", "software engineer", "engineer -"]
         has_support = any(k in txt for k in support_keywords)
         has_dev = any(k in txt for k in dev_keywords)
         return has_support and not has_dev, [k for k in support_keywords if k in txt]
@@ -123,7 +128,7 @@ class ProfileMatchEvaluator:
         reasons: List[str] = []
         key_skills: List[str] = self._extract_skills(txt)
 
-        # Deduct if exclusion signals found (use word-boundary matching to avoid false positives)
+        # Deduct if exclusion signals found
         lowered = norm_text(txt)
         for ex in EXCLUDE_SIGNALS:
             try:
@@ -138,7 +143,6 @@ class ProfileMatchEvaluator:
                         "resume_alignment_level": "Ignore",
                     }
             except re.error:
-                # Fallback to substring if the pattern is invalid for some reason
                 if ex in lowered:
                     reasons.append(f"Exclusion signal detected: '{ex}'")
                     return {
@@ -154,11 +158,11 @@ class ProfileMatchEvaluator:
         primary_hits = [s for s in key_skills if s in PRIMARY_SKILLS]
         secondary_hits = [s for s in key_skills if s in SECONDARY_SKILLS]
 
-        score += min(len(primary_hits) * 12, 60)  # up to 60 points for primary skill coverage
+        score += min(len(primary_hits) * 12, 60)
         if primary_hits:
             reasons.append(f"Matches primary skills: {', '.join(primary_hits)}")
 
-        score += min(len(secondary_hits) * 5, 15)  # up to 15 for secondary
+        score += min(len(secondary_hits) * 5, 15)
         if secondary_hits:
             reasons.append(f"Matches secondary skills: {', '.join(secondary_hits)}")
 
@@ -167,10 +171,10 @@ class ProfileMatchEvaluator:
             score += 10
             reasons.append("Mentions MFT / file transfer tools")
 
-        # On-call / production support
+        # On‑call / production support
         if self._detect_oncall(txt):
             score += 7
-            reasons.append("On-call / shift work indicated")
+            reasons.append("On‑call / shift work indicated")
 
         # Cloud presence
         clouds = self._detect_cloud(txt)
@@ -194,9 +198,9 @@ class ProfileMatchEvaluator:
             score += 6
             reasons.append("Role appears support/production oriented")
         else:
-            # if it's strongly development oriented, down-rank
+            # if it's strongly development oriented, down‑rank
             if any(k in lowered for k in ["software engineer", "senior backend", "full stack", "frontend"]):
-                reasons.append("Role appears development-heavy; down-ranked")
+                reasons.append("Role appears development‑heavy; down‑ranked")
                 score = max(score - 30, 0)
 
         # Final normalization

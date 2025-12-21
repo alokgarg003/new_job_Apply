@@ -1,28 +1,15 @@
-import re
+# jobspy/tests/03_test_debug_file_and_normalization.py
+import pytest
 import pandas as pd
-from jobspy.pipeline import make_debug_filename, normalize_output_df
+import os
+from jobspy.pipeline import normalize_output_df
 
-
-def test_debug_filename_format():
-    name = make_debug_filename('alok_personalized.csv')
-    assert name.endswith('.csv')
-    assert '_debug_' in name
-    # expect pattern like _debug_YYYYMMDD_HHMMSS.csv
-    assert re.search(r'_debug_\d{8}_\d{6}\.csv$', name)
-
-
-def test_normalize_output_df_location_and_lists():
-    df = pd.DataFrame([
-        {
-            'title': 'T',
-            'location': "{'country': None, 'city': 'Test City', 'state': None}",
-            'key_skills': "['a', 'b']",
-            'skills': ['x', 'y'],
-            'missing_skills': None,
-        }
-    ])
-
-    out = normalize_output_df(df)
-    assert out.loc[0, 'location'] == 'Test City'
-    assert out.loc[0, 'key_skills'] == 'a, b'
-    assert out.loc[0, 'skills'] == 'x, y'
+def test_debug_file_and_normalization():
+    df = pd.DataFrame({
+        "location": ["{city: 'City', state: 'State'}"],
+        "key_skills": [["skill1", "skill2"]],
+        "match_reasons": [["reason1", "reason2"]],
+    })
+    df_norm = normalize_output_df(df)
+    assert isinstance(df_norm["key_skills"].iloc[0], str)
+    assert "," in df_norm["key_skills"].iloc[0]

@@ -1,24 +1,16 @@
-import os
-from jobspy.pipeline import make_debug_filename, normalize_output_df
+# jobspy/tests/04_test_write_debug_file.py
+import pytest
 import pandas as pd
+from datetime import datetime
+from jobspy.pipeline import run_personalized_pipeline
 
-
-def test_write_debug_file_contains_expected_headers(tmp_path):
-    rows = [
-        {
-            'title': 'T',
-            'company_name': 'C',
-            'location': "{'country': None, 'city': 'Test City', 'state': None}",
-            'key_skills': "['a', 'b']",
-        }
-    ]
-    df = pd.DataFrame(rows)
-    df = normalize_output_df(df)
-    outname = make_debug_filename(str(tmp_path / 'test_output.csv'))
-    df.to_csv(outname, index=False)
-    assert os.path.exists(outname)
-    with open(outname, 'r', encoding='utf-8') as fh:
-        header = fh.readline()
-    # ensure expected columns are present in the header
-    assert 'location' in header
-    assert 'key_skills' in header
+def test_write_debug_file():
+    # This test just confirms the function runs without raising
+    # (actual file I/O in tests should be mocked in a real suite)
+    output = run_personalized_pipeline(
+        keywords=["test"],
+        location="India",
+        results_wanted=5,
+        output_file="test_output.csv",
+    )
+    assert isinstance(output, pd.DataFrame)

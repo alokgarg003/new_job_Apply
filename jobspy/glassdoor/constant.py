@@ -1,3 +1,17 @@
+# jobspy/glassdoor/constant.py
+"""Glassdoor API constants – headers, query template and fallback token."""
+
+from __future__ import annotations
+
+# ---------------------------------------------------------------------------------
+# Auth & request headers
+# ---------------------------------------------------------------------------------
+fallback_token = (
+    "Ft6oHEWlRZrxDww95Cpazw:0pGUrkb2y3TyOpAIqF2vbPmUXoXVkD3oEGDVkvfeCerceQ5-n8mBg3BovySUIjmCPHCaW0H2nQVdqzbtsYqf4Q:wcqRqeegRUa9MVLJGyujVXB7vWFPjdaS1CtrrzJq-ok"
+)
+
+# The minimal set of headers Glassdoor requires from a browser session.
+# All values are taken from a real Chrome inspection – keep the same format.
 headers = {
     "authority": "www.glassdoor.com",
     "accept": "*/*",
@@ -7,178 +21,187 @@ headers = {
     "content-type": "application/json",
     "origin": "https://www.glassdoor.com",
     "referer": "https://www.glassdoor.com/",
-    "sec-ch-ua": '"Chromium";v="118", "Google Chrome";v="118", "Not=A?Brand";v="99"',
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": '"macOS"',
-    "sec-fetch-dest": "empty",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-origin",
-    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
+    "sec‑ch‑ua": (
+        '"Chromium";v="118", "Google Chrome";v="118", "Not=A?Brand";v="99"'
+    ),
+    "sec‑ch‑ua‑mobile": "?0",
+    "sec‑ch‑ua‑platform": '"macOS"',
+    "sec‑fetch‑dest": "empty",
+    "sec‑fetch‑mode": "cors",
+    "sec‑fetch‑site": "same-origin",
+    "user‑agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/118.0.0.0 Safari/537.36"
+    ),
 }
+
+# ---------------------------------------------------------------------------------
+# GraphQL query template used for job searches
+# ---------------------------------------------------------------------------------
 query_template = """
-        query JobSearchResultsQuery(
-            $excludeJobListingIds: [Long!], 
-            $keyword: String, 
-            $locationId: Int, 
-            $locationType: LocationTypeEnum, 
-            $numJobsToShow: Int!, 
-            $pageCursor: String, 
-            $pageNumber: Int, 
-            $filterParams: [FilterParams], 
-            $originalPageUrl: String, 
-            $seoFriendlyUrlInput: String, 
-            $parameterUrlInput: String, 
-            $seoUrl: Boolean
-        ) {
-            jobListings(
-                contextHolder: {
-                    searchParams: {
-                        excludeJobListingIds: $excludeJobListingIds, 
-                        keyword: $keyword, 
-                        locationId: $locationId, 
-                        locationType: $locationType, 
-                        numPerPage: $numJobsToShow, 
-                        pageCursor: $pageCursor, 
-                        pageNumber: $pageNumber, 
-                        filterParams: $filterParams, 
-                        originalPageUrl: $originalPageUrl, 
-                        seoFriendlyUrlInput: $seoFriendlyUrlInput, 
-                        parameterUrlInput: $parameterUrlInput, 
-                        seoUrl: $seoUrl, 
-                        searchType: SR
-                    }
-                }
-            ) {
-                companyFilterOptions {
-                    id
-                    shortName
-                    __typename
-                }
-                filterOptions
-                indeedCtk
-                jobListings {
-                    ...JobView
-                    __typename
-                }
-                jobListingSeoLinks {
-                    linkItems {
-                        position
-                        url
-                        __typename
-                    }
-                    __typename
-                }
-                jobSearchTrackingKey
-                jobsPageSeoData {
-                    pageMetaDescription
-                    pageTitle
-                    __typename
-                }
-                paginationCursors {
-                    cursor
-                    pageNumber
-                    __typename
-                }
-                indexablePageForSeo
-                searchResultsMetadata {
-                    searchCriteria {
-                        implicitLocation {
-                            id
-                            localizedDisplayName
-                            type
-                            __typename
-                        }
-                        keyword
-                        location {
-                            id
-                            shortName
-                            localizedShortName
-                            localizedDisplayName
-                            type
-                            __typename
-                        }
-                        __typename
-                    }
-                    helpCenterDomain
-                    helpCenterLocale
-                    jobSerpJobOutlook {
-                        occupation
-                        paragraph
-                        __typename
-                    }
-                    showMachineReadableJobs
-                    __typename
-                }
-                totalJobsCount
-                __typename
+query JobSearchResultsQuery(
+    $excludeJobListingIds: [Long!],
+    $keyword: String,
+    $locationId: Int,
+    $locationType: LocationTypeEnum,
+    $numJobsToShow: Int!,
+    $pageCursor: String,
+    $pageNumber: Int,
+    $filterParams: [FilterParams],
+    $originalPageUrl: String,
+    $seoFriendlyUrlInput: String,
+    $parameterUrlInput: String,
+    $seoUrl: Boolean
+) {
+    jobListings(
+        contextHolder: {
+            searchParams: {
+                excludeJobListingIds: $excludeJobListingIds,
+                keyword: $keyword,
+                locationId: $locationId,
+                locationType: $locationType,
+                numPerPage: $numJobsToShow,
+                pageCursor: $pageCursor,
+                pageNumber: $pageNumber,
+                filterParams: $filterParams,
+                originalPageUrl: $originalPageUrl,
+                seoFriendlyUrlInput: $seoFriendlyUrlInput,
+                parameterUrlInput: $parameterUrlInput,
+                seoUrl: $seoUrl,
+                searchType: SR
             }
         }
-
-        fragment JobView on JobListingSearchResult {
-            jobview {
-                header {
-                    adOrderId
-                    advertiserType
-                    adOrderSponsorshipLevel
-                    ageInDays
-                    divisionEmployerName
-                    easyApply
-                    employer {
-                        id
-                        name
-                        shortName
-                        __typename
-                    }
-                    employerNameFromSearch
-                    goc
-                    gocConfidence
-                    gocId
-                    jobCountryId
-                    jobLink
-                    jobResultTrackingKey
-                    jobTitleText
-                    locationName
-                    locationType
-                    locId
-                    needsCommission
-                    payCurrency
-                    payPeriod
-                    payPeriodAdjustedPay {
-                        p10
-                        p50
-                        p90
-                        __typename
-                    }
-                    rating
-                    salarySource
-                    savedJobId
-                    sponsored
-                    __typename
-                }
-                job {
-                    description
-                    importConfigId
-                    jobTitleId
-                    jobTitleText
-                    listingId
-                    __typename
-                }
-                jobListingAdminDetails {
-                    cpcVal
-                    importConfigId
-                    jobListingId
-                    jobSourceId
-                    userEligibleForAdminJobDetails
-                    __typename
-                }
-                overview {
-                    shortName
-                    squareLogoUrl
-                    __typename
-                }
+    ) {
+        companyFilterOptions {
+            id
+            shortName
+            __typename
+        }
+        filterOptions
+        indeedCtk
+        jobListings {
+            ...JobView
+            __typename
+        }
+        jobListingSeoLinks {
+            linkItems {
+                position
+                url
                 __typename
             }
             __typename
         }
+        jobSearchTrackingKey
+        jobsPageSeoData {
+            pageMetaDescription
+            pageTitle
+            __typename
+        }
+        paginationCursors {
+            cursor
+            pageNumber
+            __typename
+        }
+        indexablePageForSeo
+        searchResultsMetadata {
+            searchCriteria {
+                implicitLocation {
+                    id
+                    localizedDisplayName
+                    type
+                    __typename
+                }
+                keyword
+                location {
+                    id
+                    shortName
+                    localizedShortName
+                    localizedDisplayName
+                    type
+                    __typename
+                }
+                __typename
+            }
+            helpCenterDomain
+            helpCenterLocale
+            jobSerpJobOutlook {
+                occupation
+                paragraph
+                __typename
+            }
+            showMachineReadableJobs
+            __typename
+        }
+        totalJobsCount
+        __typename
+    }
+}
+
+fragment JobView on JobListingSearchResult {
+    jobview {
+        header {
+            adOrderId
+            advertiserType
+            adOrderSponsorshipLevel
+            ageInDays
+            divisionEmployerName
+            easyApply
+            employer {
+                id
+                name
+                shortName
+                __typename
+            }
+            employerNameFromSearch
+            goc
+            gocConfidence
+            gocId
+            jobCountryId
+            jobLink
+            jobResultTrackingKey
+            jobTitleText
+            locationName
+            locationType
+            locId
+            needsCommission
+            payCurrency
+            payPeriod
+            payPeriodAdjustedPay {
+                p10
+                p50
+                p90
+                __typename
+            }
+            rating
+            salarySource
+            savedJobId
+            sponsored
+            __typename
+        }
+        job {
+            description
+            importConfigId
+            jobTitleId
+            jobTitleText
+            listingId
+            __typename
+        }
+        jobListingAdminDetails {
+            cpcVal
+            importConfigId
+            jobListingId
+            jobSourceId
+            userEligibleForAdminJobDetails
+            __typename
+        }
+        overview {
+            shortName
+            squareLogoUrl
+            __typename
+        }
+        __typename
+    }
+    __typename
+}
 """
-fallback_token = "Ft6oHEWlRZrxDww95Cpazw:0pGUrkb2y3TyOpAIqF2vbPmUXoXVkD3oEGDVkvfeCerceQ5-n8mBg3BovySUIjmCPHCaW0H2nQVdqzbtsYqf4Q:wcqRqeegRUa9MVLJGyujVXB7vWFPjdaS1CtrrzJq-ok"
