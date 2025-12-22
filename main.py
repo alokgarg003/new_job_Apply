@@ -1,55 +1,31 @@
 # main.py
-"""
-Main entry point for the JobSpy application.
-Handles CLI arguments and initiates the scraping/enrichment pipeline.
-"""
-
-import argparse
-import logging
 from jobspy.pipeline import run_personalized_pipeline
 from jobspy.util import create_logger
+import settings
+import argparse
 
 log = create_logger("Main")
 
-def parse_cli_args():
-    parser = argparse.ArgumentParser(description="JobSpy - Enhanced Job Search Engine")
-    parser.add_argument("search_term", type=str, default=None, help="Job search query")
-    parser.add_argument("-l", "--location", type=str, default="India", help="Location filter")
-    parser.add_argument("-s", "--site", type=str, nargs="+", default=None,
-                       choices=["linkedin", "indeed", "glassdoor", "naukri", "google", "ziprecruiter"],
-                       help="Job boards to search")
-    parser.add_argument("-r", "--remote", action="store_true", help="Show remote jobs only")
-    parser.add_argument("--results", type=int, default=15, help="Number of results to show")
-    parser.add_argument("--resume_file", type=str, help="Path to resume file for matching")
-    parser.add_argument("--output", type=str, default="personalized_jobs.csv",
-                       help="Output CSV file name")
-    parser.add_argument("--format", type=str, default="csv", choices=["csv", "markdown"],
-                       help="Output format")
-    return parser.parse_args()
-
-def main():
-    args = parse_cli_args()
-    try:
-        input_params = {
-            "search_term": args.search_term,
-            "location": args.location,
-            "remote": args.remote,
-            "results_wanted": args.results,
-            "description_format": "markdown",
-            "hours_old": None,
-            "offset": 0,
-            "linkedin_company_ids": None,
-        }
-        df = run_personalized_pipeline(
-            keywords=[args.search_term],
-            location=args.location,
-            results_wanted=args.results,
-            output_file=args.output,
-        )
-        print(f"Found {len(df)} jobs. Results saved to {args.output}")
-    except Exception as e:
-        log.error(f"Application error: {str(e)}")
-        raise
-
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Run JobSpy pipeline")
+    parser.add_argument("--dry", action="store_true", help="Run in dry mode (no network calls, uses mock data)")
+    parser.add_argument("--results", type=int, default=30, help="Number of results to fetch")
+    parser.add_argument("--output", type=str, default="alok_personalized.csv", help="Output CSV path")
+    args = parser.parse_args()
+
+    if args.dry:
+        settings.DRY_RUN = True
+        settings.SAMPLE_RESULTS = args.results or settings.SAMPLE_RESULTS
+
+    keywords = ["Application Support", "ServiceNow", "IT Support"]
+    location = "India"
+    results_wanted = args.results
+    output_file = args.output
+
+    df = run_personalized_pipeline(
+        keywords=keywords,
+        location=location,
+        results_wanted=results_wanted,
+        output_file=output_file,
+    )
+    print(f"Personalized pipeline completed. {len(df)} jobs saved to {output_file}")

@@ -1,206 +1,118 @@
 # jobspy/pipeline.py
-"""
-Core pipeline for discovery (URL fetching) and enrichment (full job page + resume‑aware matching).
-"""
-
 from __future__ import annotations
-
 import logging
 import time
 from datetime import datetime
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from urllib.parse import urlparse, urlunparse
-
-import pandas as pd
 from bs4 import BeautifulSoup
-
+import pandas as pd
 from jobspy.model import JobPost, JobResponse, Site, ScraperInput, Location
 from jobspy.util import (
-    create_session,
-    create_logger,
-    markdown_converter,
-    extract_emails_from_text,
-    norm_text,
+    create_session, create_logger, markdown_converter, extract_emails_from_text, norm_text,
 )
 from jobspy.exception import JobScrapingException
 from jobspy.evaluator import ProfileMatchEvaluator
+import settings
 
 log = create_logger("Pipeline")
-
 
 def discover_jobs(
     keywords: List[str],
     location: str | None = None,
     results_wanted: int = 100,
     sites: List[str] | None = None,
-) -> List[Dict[str, Any]]:
-    """
-    Phase 1: discover job listing URLs from selected job boards.
-    Returns list of dicts containing job_url, site, title, company, location, date_posted.
-    """
+) -> List[Dict[str, any]]:
     if sites is None:
-        # include supported discovery sites by default
-        sites = ["indeed", "linkedin", "google", "naukri", "ziprecruiter"]
+        sites = settings.SITES
     search_term = " OR ".join([f'"{k}"' for k in keywords])
-    log.info(f"Starting discovery for keywords={keywords} sites={sites}")
-
-    # Import the public scrape function
+    log.info(f"Discovery: keywords={keywords}, sites={sites}")
     from jobspy import scrape_jobs
-
     df = scrape_jobs(
         site_name=sites,
         search_term=search_term,
         location=location,
         results_wanted=results_wanted,
     )
-
     rows = []
-    if df is None or df.empty:
-        log.info("No discovery results returned")
-        return rows
-
-    for _, row in df.iterrows():
-        rows.append({
-            "job_url": row.get("job_url"),
-            "site": row.get("site"),
-            "title": row.get("title"),
-            "company": row.get("company"),
-            "location": row.get("location"),
-            "date_posted": row.get("date_posted"),
-            "short_description": row.get("description"),
-            "is_remote": row.get("is_remote"),
-            "work_from_home_type": row.get("work_from_home_type"),
-        })
+    if df is not None and not df.empty:
+        for _, row in df.iterrows():
+            rows.append({
+                "job_url": row.get("job_url"),
+                "site": row.get("site"),
+                "title": row.get("title"),
+                "company": row.get("company"),
+                "location": row.get("location"),
+                "date_posted": row.get("date_posted"),
+                "short_description": row.get("description"),
+                "is_remote": row.get("is_remote"),
+                "work_from_home_type": row.get("work_from_home_type"),
+            })
     return rows
 
-
-def validate_discovery_row(job_meta: Dict[str, Any]) -> tuple[bool, str | None]:
-    """Validate discovery meta row contains required fields."""
-    if not job_meta:
-        return False, "empty row"
-    if not job_meta.get("job_url"):
-        return False, "missing job_url"
-    if not job_meta.get("site"):
-        return False, "missing site"
+def validate_discovery_row(job_meta: Dict[str, any]) -> tuple[bool, str | None]:
+    if not job_meta: return False, "empty row"
+    if not job_meta.get("job_url"): return False, "missing job_url"
+    if not job_meta.get("site"): return False, "missing site"
     return True, None
 
-
 def normalize_output_df(df: pd.DataFrame) -> pd.DataFrame:
-    """Normalize location dicts and list columns for CSV‑friendly output."""
     import ast
-
     df = df.copy()
-
     if "location" in df.columns:
         def _normalize_location(val):
             try:
-                if isinstance(val, Location):
-                    return val.display_location()
-                if isinstance(val, dict):
-                    return Location(**val).display_location()
+                if isinstance(val, Location): return val.display_location()
+                if isinstance(val, dict): return Location(**val).display_location()
                 if isinstance(val, str) and val.strip().startswith("{"):
-                    try:
-                        d = ast.literal_eval(val)
-                        if isinstance(d, dict):
-                            return Location(**d).display_location()
-                    except Exception:
-                        return val
-                return val
-            except Exception:
-                return str(val)
+                    d = ast.literal_eval(val)
+                    if isinstance(d, dict): return Location(**d).display_location()
+            except Exception: pass
+            return val
         df["location"] = df["location"].apply(_normalize_location)
-
-    def _normalize_list_cell(v):
-        if isinstance(v, float) and pd.isna(v):
-            return None
-        if isinstance(v, (list, tuple)):
-            return ", ".join([str(x) for x in v])
-        if isinstance(v, str) and v.strip().startswith("["):
-            try:
-                parsed = ast.literal_eval(v)
-                if isinstance(parsed, (list, tuple)):
-                    return ", ".join([str(x) for x in parsed])
-            except Exception:
-                return v
-        return v
-
-    for list_col in ("key_skills", "missing_skills", "match_reasons", "skills"):
-        if list_col in df.columns:
-            df[list_col] = df[list_col].apply(_normalize_list_cell)
-
+    for col in ("key_skills", "missing_skills", "match_reasons", "skills"):
+        if col in df.columns:
+            df[col] = df[col].apply(lambda v: ", ".join([str(x) for x in v]) if isinstance(v, (list, tuple)) else v)
     return df
 
-
-def enrich_job(job_meta: Dict[str, Any], timeout_seconds: int = 15) -> JobPost | None:
-    """
-    Phase 2: fetch full job page and parse/enrich details and evaluate match.
-    Returns a JobPost with enrichment fields populated.
-    """
+def enrich_job(job_meta: Dict[str, any], timeout_seconds: int = 15) -> JobPost | None:
     url = job_meta.get("job_url")
     site = job_meta.get("site")
     title = job_meta.get("title")
     company = job_meta.get("company")
     evaluator = ProfileMatchEvaluator()
-
     session = create_session(is_tls=False, has_retry=False, clear_cookies=True)
     try:
         description = job_meta.get("short_description")
         if not description and url:
-            log.info(f"Fetching job details for {url}")
             try:
                 res = session.get(url, timeout=5)
-                html = getattr(res, "text", None)
-                if html is None:
-                    content = getattr(res, "content", b"")
-                    try:
-                        html = content.decode("utf-8", errors="ignore")
-                    except Exception:
-                        html = str(content)
+                html = getattr(res, "text", "")
                 description = html
             except Exception as e:
-                log.error(f"Error fetching {url}: {e}")
+                log.error(f"Fetch error {url}: {e}")
                 description = None
-
         text = markdown_converter(description) if description else ""
-
         eval_res = evaluator.evaluate(text)
-
-        # Build JobPost (keep original minimal fields for compatibility)
         loc_val = job_meta.get("location")
-        if isinstance(loc_val, str):
-            loc_field = {"city": loc_val}
-        else:
-            loc_field = loc_val
-
-        # Determine remote/hybrid inference
+        loc_field = {"city": loc_val} if isinstance(loc_val, str) else loc_val
         meta_is_remote = job_meta.get("is_remote")
         meta_wfh = job_meta.get("work_from_home_type")
         txt_lower = text.lower() if text else ""
         inferred_is_remote = None
+        if meta_is_remote is not None: inferred_is_remote = bool(meta_is_remote)
+        else:
+            inferred_is_remote = bool(any(k in txt_lower for k in ["remote", "work from home", "wfh"]))
         inferred_wfh = None
-        if meta_is_remote is not None:
-            inferred_is_remote = bool(meta_is_remote)
+        if isinstance(meta_wfh, str) and meta_wfh.strip(): inferred_wfh = meta_wfh.strip()
         else:
-            if any(k in txt_lower for k in ("remote", "work from home", "wfh")):
-                inferred_is_remote = True
-            elif any(k in txt_lower for k in ("onsite", "on-site", "work from office")):
-                inferred_is_remote = False
-
-        if isinstance(meta_wfh, str) and meta_wfh.strip():
-            inferred_wfh = meta_wfh.strip()
-        else:
-            if "hybrid" in txt_lower:
-                inferred_wfh = "Hybrid"
-            elif any(k in txt_lower for k in ("remote", "work from home", "wfh")):
-                inferred_wfh = "Remote"
-
+            if "hybrid" in txt_lower: inferred_wfh = "Hybrid"
+            elif any(k in txt_lower for k in ["remote", "work from home", "wfh"]): inferred_wfh = "Remote"
         job_post = JobPost(
-            id=None,
             title=title,
             company_name=company,
             job_url=url,
-            job_url_direct=None,
             location=loc_field,
             description=text,
             key_skills=eval_res.get("key_skills"),
@@ -209,105 +121,85 @@ def enrich_job(job_meta: Dict[str, Any], timeout_seconds: int = 15) -> JobPost |
             match_reasons=eval_res.get("match_reasons"),
             missing_skills=eval_res.get("missing_skills"),
             resume_alignment_level=eval_res.get("resume_alignment_level"),
-            why_this_job_fits="; ".join(eval_res.get("match_reasons", [])) if eval_res.get("match_reasons") else None,
+            why_this_job_fits=eval_res.get("why_this_job_fits"),
             site=site,
             is_remote=inferred_is_remote,
             work_from_home_type=inferred_wfh,
         )
-
-        # Log decision
         if job_post.resume_alignment_level and job_post.resume_alignment_level != "Ignore":
-            log.info(f"Accepted — {job_post.resume_alignment_level}: {title} @ {company} ({job_post.match_score})")
+            log.info(f"Accepted: {job_post.resume_alignment_level} - {title} @ {company} (score={job_post.match_score})")
         else:
-            log.info(f"Rejected — {job_post.resume_alignment_level or 'Ignore'}: {title} @ {company} ({job_post.match_score})")
-
-        # Log remote/hybrid inference for visibility
-        if inferred_is_remote is not None:
-            src = "meta" if meta_is_remote is not None else "inferred"
-            log.info(f"Remote status ({src}) for {title}: {inferred_is_remote}")
-        if inferred_wfh is not None:
-            src = "meta" if meta_wfh is not None else "inferred"
-            log.info(f"Work‑from‑home type ({src}) for {title}: {inferred_wfh}")
-
+            log.info(f"Rejected: {job_post.resume_alignment_level or 'Ignore'} - {title} @ {company} (score={job_post.match_score})")
         return job_post
     except Exception as e:
-        log.error(f"Failed to enrich job {url}: {e}")
+        log.error(f"Enrichment error {url}: {e}")
         return None
-
 
 def run_personalized_pipeline(
     keywords: List[str],
     location: str | None,
     results_wanted: int,
-    output_file: str = "personalized_jobs.csv",
+    output_file: str | None = None,
 ) -> pd.DataFrame:
-    """
-    Run discovery → enrichment → CSV output.
-    """
     discovery = discover_jobs(keywords=keywords, location=location, results_wanted=results_wanted)
     enriched_posts = []
     for meta in discovery:
         valid, reason = validate_discovery_row(meta)
         if not valid:
-            log.warning(f"Skipping discovery row due to validation failure: {reason} -- {meta}")
+            log.warning(f"Skipping row: {reason} -- {meta}")
             continue
         post = enrich_job(meta)
-        if post:
-            enriched_posts.append(post)
+        if post: enriched_posts.append(post)
         time.sleep(0.5)
-
-    if not enriched_posts:
-        log.info("No enriched posts produced")
-        return pd.DataFrame()
-
-    # Convert to DataFrame
+    if not enriched_posts: return pd.DataFrame()
     rows = [p.dict() for p in enriched_posts]
     df = pd.DataFrame(rows)
-
-    # Normalize
     df = normalize_output_df(df)
-
-    # Write a debug dump with full columns (timestamped)
-    debug_out = output_file.replace(".csv", f"_debug_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv")
+    debug_out = output_file.replace(".csv", f"_debug_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv") if output_file else None
     debug_cols = [
-        "id", "title", "company_name", "location", "site", "job_url", "job_url_direct",
-        "description", "company_url", "job_type", "compensation", "date_posted", "emails",
-        "is_remote", "listing_type", "job_level", "company_industry", "company_addresses",
-        "company_num_employees", "company_revenue", "company_description", "company_logo",
-        "banner_photo_url", "job_function", "skills", "experience_range", "company_rating",
-        "company_reviews_count", "vacancy_count", "work_from_home_type", "key_skills",
-        "match_score", "match_reasons", "missing_skills", "resume_alignment_level", "why_this_job_fits",
+        "id", "title", "company_name", "location", "site", "job_url", "description",
+        "key_skills", "match_score", "match_reasons", "missing_skills", "resume_alignment_level",
+        "why_this_job_fits", "is_remote", "work_from_home_type",
     ]
     for c in debug_cols:
-        if c not in df.columns:
-            df[c] = None
+        if c not in df.columns: df[c] = None
     extra_cols = [c for c in df.columns if c not in debug_cols]
     df = df[debug_cols + extra_cols]
-
-    try:
-        df.to_csv(debug_out, index=False)
-        log.info(f"Wrote debug dump to {debug_out}")
-    except Exception as e:
-        log.error(f"Failed to write debug dump {debug_out}: {e}")
-
-    # Ensure output columns per spec
+    if debug_out:
+        try:
+            df.to_csv(debug_out, index=False)
+            log.info(f"Wrote debug to {debug_out}")
+        except Exception as e:
+            log.error(f"Write debug failed: {e}")
     cols = [
         "title", "company_name", "location", "site", "job_url", "experience_range",
         "key_skills", "match_score", "why_this_job_fits", "missing_skills", "resume_alignment_level",
         "is_remote", "work_from_home_type",
     ]
-    if "site" not in df.columns:
-        df["site"] = None
-
     df_out = df[[c for c in cols if c in df.columns]]
+    out_path = output_file or (settings.FINAL_CSV_TEMPLATE.name.format(timestamp=datetime.now().strftime("%Y%m%d_%H%M%S")))
     try:
-        df_out.to_csv(output_file, index=False)
-        log.info(f"Wrote personalized output to {output_file}")
+        df_out.to_csv(out_path, index=False)
+        log.info(f"Wrote output to {out_path}")
     except Exception as e:
-        alt = output_file.replace(".csv", "_final.csv")
+        alt = out_path.replace(".csv", "_final.csv")
         try:
             df_out.to_csv(alt, index=False)
-            log.warning(f"Failed to write {output_file}; wrote to {alt} instead: {e}")
+            log.warning(f"Failed to write {out_path}; wrote to {alt}: {e}")
+            out_path = alt
         except Exception as e2:
-            log.error(f"Failed to write output to both {output_file} and {alt}: {e2}")
+            log.error(f"Failed to write to both {out_path} and {alt}: {e2}")
+            return df_out
+
+    # Append to aggregate master CSV if enabled
+    try:
+        from jobspy.output_manager import append_to_master
+        import settings as project_settings
+        if getattr(project_settings, "ENABLE_AGGREGATE_OUTPUT", False):
+            master = project_settings.AGGREGATE_CSV
+            res = append_to_master(out_path, master, dedupe_on=getattr(project_settings, "AGGREGATE_DEDUPE_ON", None), keep_strategy=getattr(project_settings, "AGGREGATE_KEEP_STRATEGY", "latest"))
+            log.info(f"Aggregate update: added={res['added']} skipped={res['skipped']} master_rows={res['master_rows']}")
+    except Exception as e:
+        log.error(f"Failed to append to aggregate master CSV: {e}")
+
     return df_out

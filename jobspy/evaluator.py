@@ -1,81 +1,23 @@
 # jobspy/evaluator.py
-"""
-Resume‑aware job matching evaluator for personalized filtering.
-"""
-
 from __future__ import annotations
-
 import re
 from typing import List, Dict
-
-# Profile priorities for Alok Garg
-PRIMARY_SKILLS = [
-    "linux",
-    "shell",
-    "bash",
-    "serviceNow".lower(),
-    "servicenow",
-    "itil",
-    "incident",
-    "sla",
-    "mft",
-    "sftp",
-    "ftps",
-    "ftp",
-    "as2",
-    "goanywhere",
-    "fms",
-    "ftg",
-    "monitor",
-    "monitoring",
-    "alert",
-    "log",
-    "log analysis",
-    "python",
-    "jenkins",
-    "bitbucket",
-    "azure",
-    "aws",
-]
-
-SECONDARY_SKILLS = ["java", "spring", "rest", "api", "devops", "observability", "grafana", "prometheus"]
-
-# Role exclusion signals (strongly negative)
-EXCLUDE_SIGNALS = [
-    "frontend",
-    "react",
-    "vue",
-    "angular",
-    "ux",
-    "ui",
-    "ds(a)",
-    "competitive programming",
-]
-
+import settings
 
 def norm_text(text: str) -> str:
-    if not text:
-        return ""
+    if not text: return ""
     return text.lower()
 
-
 class ProfileMatchEvaluator:
-    """Evaluate a job description text against Alok Garg's profile.
-
-    Returns a dict with match_score (0‑100), match_reasons (list[str]), missing_skills (list[str]),
-    key_skills_extracted (list[str]), and resume_alignment_level (Strong Match / Good Match / Stretch Role / Ignore).
-    """
-
     def __init__(self):
         self.exp_regex = re.compile(r"(?P<min>\d+)[+]?\s*[-–to]{0,3}\s*(?P<max>\d+)?\s*years?", re.I)
 
     def _extract_skills(self, text: str) -> List[str]:
         txt = norm_text(text)
         found = set()
-        for skill in PRIMARY_SKILLS + SECONDARY_SKILLS:
+        for skill in settings.PROFILE_PRIMARY_SKILLS + settings.PROFILE_SECONDARY_SKILLS:
             if skill in txt:
                 found.add(skill)
-        # normalize common variants
         if "service now" in txt or "service-now" in txt or "servicenow" in txt:
             found.add("servicenow")
         return sorted(found)
@@ -93,28 +35,22 @@ class ProfileMatchEvaluator:
 
     def _detect_oncall(self, text: str) -> bool:
         txt = norm_text(text)
-        keywords = ["on-call", "on call", "rota", "rotation", "shift", "night shift", "24x7"]
-        return any(k in txt for k in keywords)
+        return any(k in txt for k in ["on-call", "on call", "rota", "rotation", "shift", "night shift", "24x7"])
 
     def _detect_mft(self, text: str) -> bool:
         txt = norm_text(text)
-        mft_keys = ["mft", "goanywhere", "go-anywhere", "go anywhere", "managed file transfer", "fms", "ftg"]
-        return any(k in txt for k in mft_keys)
+        return any(k in txt for k in ["mft", "goanywhere", "go-anywhere", "go anywhere", "managed file transfer", "fms", "ftg"])
 
     def _detect_cloud(self, text: str) -> List[str]:
         txt = norm_text(text)
         clouds = []
-        if "azure" in txt:
-            clouds.append("Azure")
-        if "aws" in txt:
-            clouds.append("AWS")
-        if "gcp" in txt or "google cloud" in txt:
-            clouds.append("GCP")
+        if "azure" in txt: clouds.append("Azure")
+        if "aws" in txt: clouds.append("AWS")
+        if "gcp" in txt or "google cloud" in txt: clouds.append("GCP")
         return clouds
 
     def _detect_support_signal(self, text: str) -> tuple[bool, List[str]]:
         txt = norm_text(text)
-        positives = []
         support_keywords = ["production", "support", "incident", "l2", "l3", "troubleshoot", "root cause",
                            "incident management", "problem management", "service desk", "ticket"]
         dev_keywords = ["develop", "implementation", "design", "feature", "software engineer", "engineer -"]
@@ -126,17 +62,15 @@ class ProfileMatchEvaluator:
         txt = text or ""
         score = 0
         reasons: List[str] = []
-        key_skills: List[str] = self._extract_skills(txt)
+        key_skills = self._extract_skills(txt)
 
-        # Deduct if exclusion signals found
         lowered = norm_text(txt)
-        for ex in EXCLUDE_SIGNALS:
+        for ex in settings.PROFILE_EXCLUDE_SIGNALS:
             try:
                 if re.search(rf"\b{re.escape(ex)}\b", lowered, re.I):
-                    reasons.append(f"Exclusion signal detected: '{ex}'")
                     return {
                         "match_score": 0,
-                        "match_reasons": reasons,
+                        "match_reasons": [f"Exclusion signal: '{ex}'"],
                         "missing_skills": [],
                         "key_skills": key_skills,
                         "experience_range": self._extract_experience(txt),
@@ -144,86 +78,60 @@ class ProfileMatchEvaluator:
                     }
             except re.error:
                 if ex in lowered:
-                    reasons.append(f"Exclusion signal detected: '{ex}'")
                     return {
                         "match_score": 0,
-                        "match_reasons": reasons,
+                        "match_reasons": [f"Exclusion signal: '{ex}'"],
                         "missing_skills": [],
                         "key_skills": key_skills,
                         "experience_range": self._extract_experience(txt),
                         "resume_alignment_level": "Ignore",
                     }
 
-        # Primary skill hits
-        primary_hits = [s for s in key_skills if s in PRIMARY_SKILLS]
-        secondary_hits = [s for s in key_skills if s in SECONDARY_SKILLS]
+        primary_hits = [s for s in key_skills if s in settings.PROFILE_PRIMARY_SKILLS]
+        secondary_hits = [s for s in key_skills if s in settings.PROFILE_SECONDARY_SKILLS]
 
-        score += min(len(primary_hits) * 12, 60)
-        if primary_hits:
-            reasons.append(f"Matches primary skills: {', '.join(primary_hits)}")
+        score += min(len(primary_hits) * settings.EVAL_PRIMARY_WEIGHT, 60)
+        if primary_hits: reasons.append(f"Primary skills: {', '.join(primary_hits)}")
 
-        score += min(len(secondary_hits) * 5, 15)
-        if secondary_hits:
-            reasons.append(f"Matches secondary skills: {', '.join(secondary_hits)}")
+        score += min(len(secondary_hits) * settings.EVAL_SECONDARY_WEIGHT, 15)
+        if secondary_hits: reasons.append(f"Secondary skills: {', '.join(secondary_hits)}")
 
-        # MFT & file transfer give bonus
         if self._detect_mft(txt):
-            score += 10
-            reasons.append("Mentions MFT / file transfer tools")
-
-        # On‑call / production support
+            score += settings.EVAL_MFT_BONUS
+            reasons.append("MFT / file transfer tools")
         if self._detect_oncall(txt):
-            score += 7
-            reasons.append("On‑call / shift work indicated")
-
-        # Cloud presence
+            score += settings.EVAL_ONCALL_BONUS
+            reasons.append("On-call / shift work")
         clouds = self._detect_cloud(txt)
         if clouds:
             score += min(5 * len(clouds), 10)
-            reasons.append(f"Cloud mentions: {', '.join(clouds)}")
-
-        # ServiceNow / ITIL / incident
-        if "servicenow" in key_skills or "itil" in key_skills or "incident" in lowered:
+            reasons.append(f"Cloud: {', '.join(clouds)}")
+        if any(k in lowered for k in ["servicenow", "itil", "incident"]):
             score += 8
-            reasons.append("ServiceNow/ITIL/incident handling evidence")
-
-        # Jenkins/CI/CD
-        if "jenkins" in key_skills or "ci/cd" in lowered:
+            reasons.append("ServiceNow/ITIL/incident")
+        if any(k in lowered for k in ["jenkins", "ci/cd"]):
             score += 4
-            reasons.append("CI/CD exposure (Jenkins/Bitbucket)")
-
-        # Support signal
-        support_signal, support_evidence = self._detect_support_signal(txt)
+            reasons.append("CI/CD")
+        support_signal, _ = self._detect_support_signal(txt)
         if support_signal:
-            score += 6
-            reasons.append("Role appears support/production oriented")
+            score += settings.EVAL_SUPPORT_BONUS
+            reasons.append("Support/production oriented")
         else:
-            # if it's strongly development oriented, down‑rank
             if any(k in lowered for k in ["software engineer", "senior backend", "full stack", "frontend"]):
-                reasons.append("Role appears development‑heavy; down‑ranked")
-                score = max(score - 30, 0)
+                reasons.append("Development heavy; down-ranked")
+                score = max(score - settings.EVAL_DEV_PENALTY, 0)
 
-        # Final normalization
         score = max(0, min(100, int(score)))
-
-        # Missing important skills
         desired = ["linux", "sftp", "servicenow", "itil"]
         missing = [d for d in desired if d not in key_skills and d not in lowered]
 
-        # Levels
-        if score >= 70:
-            level = "Strong Match"
-        elif score >= 45:
-            level = "Good Match"
-        elif score >= 20:
-            level = "Stretch Role"
-        else:
-            level = "Ignore"
+        if score >= 70: level = "Strong Match"
+        elif score >= 45: level = "Good Match"
+        elif score >= 20: level = "Stretch Role"
+        else: level = "Ignore"
 
-        # Additional small checks
         exp = self._extract_experience(txt)
-        if exp:
-            reasons.append(f"Experience range detected: {exp}")
+        if exp: reasons.append(f"Experience: {exp}")
 
         return {
             "match_score": score,
@@ -232,4 +140,5 @@ class ProfileMatchEvaluator:
             "key_skills": key_skills,
             "experience_range": exp,
             "resume_alignment_level": level,
+            "why_this_job_fits": "; ".join(reasons) if reasons else None,
         }

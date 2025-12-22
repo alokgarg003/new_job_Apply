@@ -1,9 +1,6 @@
-Here’s a **comprehensive README.md** that documents the whole project, its structure, and how to run it safely while keeping your current LinkedIn + Naukri output intact.
 
-Save this as `README.md` in the project root (overwrite the existing one):
 
-```markdown
-# JobSpy — Personalized Job Intelligence for Alok Garg 🚀
+# JobSpy — Personalized Job Intelligence 🚀
 
 A robust, extensible job‑scraping and matching pipeline focused on **India** with optional remote‑job exploration.  
 This README walks you through the architecture, how to run it, and how to safely experiment with additional job boards without breaking your reliable sources (LinkedIn + Naukri).
@@ -94,7 +91,7 @@ pip install -r requirements.txt
 poetry install
 ```
 
-### 2️⃣ Run the Default Pipeline (LinkedIn + Naukri)
+### 2️⃣ Run the Default Pipeline (LinkedIn + Naukri)
 
 ```bash
 python run_alok.py
@@ -103,8 +100,29 @@ python run_alok.py
 **What it does**
 - Searches for jobs matching `["Application Support", "ServiceNow", "IT Support"]` in India.
 - Scrapes LinkedIn and Naukri (these are known to work for India).
-- Enriches each job with skill extraction and resume‑aware scoring.
+- Enriches each job with skill extraction and resume-aware scoring.
 - Saves `alok_personalized.csv` (final) and a timestamped debug dump.
+
+**Full run (complete job list)**
+
+To run a full pipeline and obtain a larger results set (for example, 200 results), use either the packaged run script or the CLI:
+
+```bash
+# Packaged full run (uses 200 results by default and writes `alok_personalized.csv`)
+python run_alok.py
+
+# CLI full run with explicit results and output path
+python main.py --results 200 --output outputs/full_run.csv
+```
+
+Notes:
+- Aggregation: when `settings.ENABLE_AGGREGATE_OUTPUT` is True the pipeline will append results to `outputs/all_jobs.csv`.
+- Completion message: the pipeline prints a summary like: `Personalized pipeline completed. X jobs saved to <output_file>`.
+- Manual append to master (if needed):
+
+```bash
+python -c "from jobspy.output_manager import append_to_master; print(append_to_master('outputs/full_run.csv','outputs/all_jobs.csv'))"
+```
 
 ### 3️⃣ Add Remote Jobs (Optional)
 
@@ -244,6 +262,27 @@ MIT – see `LICENSE`.
 ---
 
 **Happy hunting! 🚀**
-```
 
-You can now paste this content into a new `README.md` file in the project root. It gives a clear overview of the codebase, how to run it safely while preserving your current LinkedIn + Naukri output, and how to experiment with other job boards without breaking anything. Let me know if you’d like any section expanded or if you want a quick script to add the `--remote` flag to the CLI.
+---
+
+## 🧑‍💻 Developer notes (quick)
+
+- Run a dry (no-network) pipeline for quick verification:
+  ```bash
+  python main.py --dry --results 2 --output outputs/dry_out.csv
+  ```
+
+- Run a short live run to validate scrapers (small results):
+  ```bash
+  python main.py --results 5 --output outputs/live_test.csv
+  ```
+
+- Manual tests (no pytest required):
+  ```bash
+  python tests/run_manual_tests.py
+  ```
+
+- Tests added: basic utils, Naukri parsing, and a dry pipeline smoke test. Use `pytest` if you install it (`pip install pytest`).
+
+- If you want CI friendly tests, I can add GitHub Actions and ensure `pytest` runs on PRs.
+

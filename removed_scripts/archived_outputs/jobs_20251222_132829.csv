@@ -1,0 +1,3 @@
+title,company_name,location,site,job_url,experience_range,key_skills,match_score,why_this_job_fits,missing_skills,resume_alignment_level,is_remote,work_from_home_type
+Sample LinkedIn Job,Acme Co,"Bengaluru, Karnataka, india",linkedin,https://linkedin.example/job/1,,,0,,"linux, sftp, servicenow, itil",Ignore,False,
+Sample Naukri Job,Beta Ltd,"Mumbai, Maharashtra, india",naukri,https://naukri.example/job/1,,,0,,"linux, sftp, servicenow, itil",Ignore,False,

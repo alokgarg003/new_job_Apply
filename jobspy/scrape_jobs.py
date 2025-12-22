@@ -1,69 +1,42 @@
 # jobspy/scrape_jobs.py
-"""
-Public API entry point for scraping jobs.
-"""
-
 from __future__ import annotations
-
 import math
 import logging
-import pandas as pd
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Tuple, Optional, Union, List
-
+from typing import Optional, Union, List
+import pandas as pd
 from jobspy.model import (
-    JobPost,
-    JobResponse,
-    Site,
-    ScraperInput,
-    Country,
-    JobType,
-    CompensationInterval,
-    Location,
-    SalarySource,
+    JobPost, JobResponse, Site, ScraperInput, Country, JobType, CompensationInterval, Location, SalarySource,
 )
-from jobspy.google import Google
-from jobspy.indeed import Indeed
 from jobspy.linkedin import LinkedIn
 from jobspy.naukri import Naukri
-from jobspy.ziprecruiter import ZipRecruiter
-from jobspy.glassdoor import Glassdoor
-from jobspy.remoterocketship import RemoteRocketship
-from jobspy.util import (
-    create_logger,
-    extract_salary,
-    create_session,
-    get_enum_from_value,
-    map_str_to_site,
-    convert_to_annual,
-    desired_order,
-)
+from jobspy.util import create_logger, extract_salary, create_session, get_enum_from_job_type, map_str_to_site, convert_to_annual, desired_order
+import settings
 
 log = create_logger("ScrapeJobs")
 
 SCRAPER_MAPPING = {
     Site.LINKEDIN: LinkedIn,
-    Site.INDEED: Indeed,
-    Site.ZIP_RECRUITER: ZipRecruiter,
-    Site.GLASSDOOR: Glassdoor,
-    Site.GOOGLE: Google,
     Site.NAUKRI: Naukri,
-    Site.REMOTE_ROCKETSHIP: RemoteRocketship,
 }
 
+# Mapping for dry-run/mock mode (no network)
+try:
+    from .mock_scrapers import MockLinkedIn, MockNaukri
+    MOCK_SCRAPER_MAPPING = {
+        Site.LINKEDIN: MockLinkedIn,
+        Site.NAUKRI: MockNaukri,
+    }
+except Exception:
+    MOCK_SCRAPER_MAPPING = {}
+
 def set_logger_level(verbose: int):
-    """
-    Adjusts the logger's level. This function allows the logging level to be changed at runtime.
-    :param verbose: int {0, 1, 2} (default=2, all logs)
-    """
     level_name = {2: "INFO", 1: "WARNING", 0: "ERROR"}.get(verbose, "INFO")
     level = getattr(logging, level_name.upper(), None)
     if level is not None:
         for logger_name in logging.root.manager.loggerDict:
             if logger_name.startswith("JobSpy:"):
                 logging.getLogger(logger_name).setLevel(level)
-    else:
-        raise ValueError(f"Invalid log level: {level_name}")
 
 def scrape_jobs(
     site_name: str | list[str] | Site | list[Site] | None = None,
@@ -74,37 +47,27 @@ def scrape_jobs(
     is_remote: bool = False,
     job_type: str | None = None,
     easy_apply: bool | None = None,
-    results_wanted: int = 15,
+    results_wanted: int = settings.RESULTS_WANTED,
     country_indeed: str = "usa",
-    proxies: list[str] | str | None = None,
-    ca_cert: str | None = None,
-    description_format: str = "markdown",
-    linkedin_fetch_description: bool | None = False,
+    proxies: list[str] | str | None = settings.PROXIES,
+    ca_cert: str | None = settings.CA_CERT,
+    description_format: str = settings.DESCRIPTION_FORMAT,
+    linkedin_fetch_description: bool | None = settings.LI_FETCH_DESCRIPTION,
     linkedin_company_ids: list[int] | None = None,
     offset: int | None = 0,
     hours_old: int = None,
-    enforce_annual_salary: bool = False,
-    verbose: int = 0,
+    enforce_annual_salary: bool = settings.ENFORCE_ANNUAL_SALARY,
+    verbose: int = settings.VERBOSE,
     **kwargs,
 ) -> pd.DataFrame:
-    """
-    Scrapes job data from job boards concurrently.
-    :return: Pandas DataFrame containing job data
-    """
     set_logger_level(verbose)
-    job_type = get_enum_from_value(job_type) if job_type else None
-
+    job_type = get_enum_from_job_type(job_type) if job_type else None
     def get_site_type():
         site_types = list(Site)
-        if isinstance(site_name, str):
-            site_types = [map_str_to_site(site_name)]
-        elif isinstance(site_name, Site):
-            site_types = [site_name]
+        if isinstance(site_name, str): site_types = [map_str_to_site(site_name)]
+        elif isinstance(site_name, Site): site_types = [site_name]
         elif isinstance(site_name, list):
-            site_types = [
-                map_str_to_site(site) if isinstance(site, str) else site
-                for site in site_name
-            ]
+            site_types = [map_str_to_site(site) if isinstance(site, str) else site for site in site_name]
         return site_types
 
     country_enum = Country.from_string(country_indeed)
@@ -128,7 +91,11 @@ def scrape_jobs(
     )
 
     def scrape_site(site: Site) -> tuple[str, JobResponse]:
-        scraper_class = SCRAPER_MAPPING[site]
+        # Use mock scrapers in DRY_RUN mode to avoid network calls
+        if getattr(settings, "DRY_RUN", False) and site in MOCK_SCRAPER_MAPPING:
+            scraper_class = MOCK_SCRAPER_MAPPING[site]
+        else:
+            scraper_class = SCRAPER_MAPPING[site]
         scraper = scraper_class(proxies=proxies, ca_cert=ca_cert)
         scraped_data: JobResponse = scraper.scrape(scraper_input)
         cap_name = site.value.capitalize()
@@ -143,16 +110,12 @@ def scrape_jobs(
         return site_val, scraped_info
 
     with ThreadPoolExecutor() as executor:
-        future_to_site = {
-            executor.submit(worker, site): site for site in scraper_input.site_type
-        }
-
+        future_to_site = {executor.submit(worker, site): site for site in scraper_input.site_type}
         for future in as_completed(future_to_site):
             site_value, scraped_data = future.result()
             site_to_jobs_dict[site_value] = scraped_data
 
     jobs_dfs: list[pd.DataFrame] = []
-
     for site, job_response in site_to_jobs_dict.items():
         for job in job_response.jobs:
             job_data = job.dict()
@@ -168,11 +131,8 @@ def scrape_jobs(
                 ", ".join(job_data["emails"]) if job_data["emails"] else None
             )
             if job_data["location"]:
-                job_data["location"] = Location(
-                    **job_data["location"]
-                ).display_location()
+                job_data["location"] = Location(**job_data["location"]).display_location()
 
-            # Handle compensation
             compensation_obj = job_data.get("compensation")
             if compensation_obj and isinstance(compensation_obj, dict):
                 job_data["interval"] = (
@@ -200,7 +160,7 @@ def scrape_jobs(
                         job_data["currency"],
                     ) = extract_salary(
                         job_data["description"],
-                        enforce_annual=enforce_annual_salary,  # <-- Fixed parameter name
+                        enforce_annual=enforce_annual_salary,
                     )
                     job_data["salary_source"] = SalarySource.DESCRIPTION.value
 
@@ -210,7 +170,6 @@ def scrape_jobs(
                 else None
             )
 
-            # Naukri‑specific fields
             job_data["skills"] = (
                 ", ".join(job_data["skills"]) if job_data["skills"] else None
             )
@@ -224,23 +183,29 @@ def scrape_jobs(
             jobs_dfs.append(job_df)
 
     if jobs_dfs:
-        # Step 1: Filter out all‑NA columns from each DataFrame before concatenation
         filtered_dfs = [df.dropna(axis=1, how="all") for df in jobs_dfs]
-
-        # Step 2: Concatenate the filtered DataFrames
         jobs_df = pd.concat(filtered_dfs, ignore_index=True)
-
-        # Step 3: Ensure all desired columns are present, adding missing ones as empty
         for column in desired_order:
             if column not in jobs_df.columns:
                 jobs_df[column] = None
-
-        # Reorder the DataFrame according to the desired order
         jobs_df = jobs_df[desired_order]
-
-        # Step 4: Sort the DataFrame as required
         return jobs_df.sort_values(
             by=["site", "date_posted"], ascending=[True, False]
         ).reset_index(drop=True)
     else:
         return pd.DataFrame()
+
+def convert_to_annual(job_data: dict):
+    if job_data["interval"] == "hourly":
+        job_data["min_amount"] *= 2080
+        job_data["max_amount"] *= 2080
+    if job_data["interval"] == "monthly":
+        job_data["min_amount"] *= 12
+        job_data["max_amount"] *= 12
+    if job_data["interval"] == "weekly":
+        job_data["min_amount"] *= 52
+        job_data["max_amount"] *= 52
+    if job_data["interval"] == "daily":
+        job_data["min_amount"] *= 260
+        job_data["max_amount"] *= 260
+    job_data["interval"] = "yearly"

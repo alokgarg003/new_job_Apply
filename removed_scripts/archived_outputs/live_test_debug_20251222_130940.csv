@@ -1,0 +1,282 @@
+id,title,company_name,location,site,job_url,description,key_skills,match_score,match_reasons,missing_skills,resume_alignment_level,why_this_job_fits,is_remote,work_from_home_type,job_url_direct,company_url,company_url_direct,job_type,compensation,date_posted,emails,listing_type,job_level,company_industry,company_addresses,company_num_employees,company_revenue,company_description,company_logo,banner_photo_url,job_function,skills,experience_range,company_rating,company_reviews_count,vacancy_count
+,IT Support Specialist,Stefanini North America and APAC,"Gurugram, Haryana, India",linkedin,https://www.linkedin.com/jobs/view/4344003974,"\*\*Details:\*\*
+Job Description
+\*\*\*\*Responsibilities:\*\*\*\*
+\* Provide swift and professional deskside IT support
+\* Perform on-site analysis, diagnosis, and resolution of desktop problems for clients, recommend and implement corrective solutions
+\* Install, configure, test, maintain, monitor, and troubleshoot client workstations, mobile devices and related hardware or software in order to deliver required deskside service levels
+\* Utilize the BLK ticket management system to record, update and resolve tickets from the Helpdesk
+\* Collaborate with other support groups across global locations to help troubleshoot client issues
+\* Utilize BLK tools for building, monitoring and troubleshooting client devices
+\* Participate in Disaster recovery testing exercises
+\* Upholding procedures for logging, reporting, and statistically monitoring desktop operations
+\* Write technical support and client documentation in form of Knowledgebase articles
+\* Meet or exceed expected customer service levels
+\* Other duties as assigned by the Level 2 Support Manager
+Job Requirements
+\*\*Details:\*\*
+\* Excellent proven track record supporting clients in a financial environment
+\* Excellent proven customer service-based approach
+\* Proven ability to prioritize tasks and issues according to the business impact
+\* Good written and verbal communication skills
+\* Good time management skills
+\* Able to work in a high-pressure environment
+\* Strong organizational and analytical skills
+\* Ability to multi-task and work under pressure
+\* Ability to work autonomously and within team
+\* Flexible and proactive with a ""will do' attitude
+\* Takes responsibility and follows through on issues to closure and root cause resolution
+\* Demonstrable desire to achieve
+\* Good knowledge about Technology & IT Hardware
+\* Experience in OS migration would be an advantage (like Win11 migration)","log, monitor, monitoring",42,"Primary skills: log, monitor, monitoring, Support/production oriented","linux, sftp, servicenow, itil",Stretch Role,"Primary skills: log, monitor, monitoring; Support/production oriented",False,,,,,,,,,,,,,,,,,,,,,,,
+,IT Support Engineer,Confluent,"Bengaluru, Karnataka, India",linkedin,https://www.linkedin.com/jobs/view/4343842182,"We’re not just building better tech. We’re rewriting how data moves and what the world can do with it. With Confluent, data doesn’t sit still. Our platform puts information in motion, streaming in near real-time so companies can react faster, build smarter, and deliver experiences as dynamic as the world around them.
+It takes a certain kind of person to join this team. Those who ask hard questions, give honest feedback, and show up for each other. No egos, no solo acts. Just smart, curious humans pushing toward something bigger, together.
+One Confluent. One Team. One Data Streaming Platform.
+\*\*About The Role\*\*
+We are seeking a detail-oriented and hardworking individual with exceptional customer service skills to join our expanding IT team. In this position, you will be responsible for providing technical assistance and support to team members with issues related to computer systems, hardware, or software. You will also help manage the onboarding setup and deployment for new hires and serve as a point of contact for employees experiencing technical issues, making this a critical and high-visibility role.
+If you are flexible, team-focused, excited by the world of IT, skilled at handling and prioritizing tasks, and able to maintain a positive and professional attitude, even under stressful situations, you could be an excellent fit for this role.
+\*\*What You Will Do\*\*
+\* 2+ years of technical support experience in a corporate environment or Internship experience
+\* Responsible for managing and supporting the IT infrastructure of the Bangalore office as part of IT operations
+\* Onboarding & offboarding for Confluent employees & contractors
+\* Documenting Knowledge Base articles for employee self-service
+\* Managing laptop setup and deployment for new employees with standard hardware, images, and software.
+\* Installing new hardware and software upgrades requested from users
+\* Monitoring and responding quickly and effectively to end-user requests or incidents
+\* Analyzing and solving technical problems by using problem-solving skills via telephone, email, and remote assistance
+\* Providing technical support for audio/visual and event support
+\* Diagnosis and resolution of computer hardware, software, and network issues
+\* Asset Management & purchasing for hardware, software, and SaaS applications
+\*\*What You Will Bring\*\*
+\* Bachelor’s degree in Engineering - Computer Science or related field
+\* Excellent customer service, communication, and organizational skills with a high level of attention to detail
+\* Experience with AI/ML technologies (GenAI, LLM, etc.) is a plus.
+\* Knowledge of Windows and Mac OS operating systems, and broad understanding of productivity tools
+\* Demonstrated knowledge of technical ability across a wide range of hardware, software, and mobile platforms
+\* Good analytical and troubleshooting skills
+\*\*Ready to build what's next? Let’s get in motion.\*\*
+\*\*Come As You Are\*\*
+Belonging isn’t a perk here. It’s the baseline. We work across time zones and backgrounds, knowing the best ideas come from different perspectives. And we make space for everyone to lead, grow, and challenge what’s possible.
+We’re proud to be an equal opportunity workplace. Employment decisions are based on job-related criteria, without regard to race, color, religion, sex, sexual orientation, gender identity, national origin, disability, veteran status, or any other classification protected by law.","incident, log, monitor, monitoring",0,Exclusion signal: 'react',,Ignore,,True,Remote,,,,,,,,,,,,,,,,,,,2+ years,,,
+,Technical Support Engineer,HDFC securities,"Mumbai, Maharashtra, India",linkedin,https://www.linkedin.com/jobs/view/4340932359,"\*\*Job Title:\*\*
+Technical Support Engineer - Application Management
+\*\*Experience Level:\*\*
+3-7 Years
+\*\*Key Responsibilities:\*\*
+\*\*Application Deployment & Management:\*\*
+\* Manage the deployment of applications, including relevant upgrades and patches, across UAT, Production, and Disaster Recovery (DR) environments.
+\* Oversee the deployment and basic administration of databases.
+\* Ensure the continuous uptime and availability of applications, proactively identifying and resolving issues with minimal supervision.
+\* Coordinate with internal infrastructure teams for any machine, OS, firmware, or networking upgrades and patches, ensuring application compatibility and stability.
+\*\*Technical Support & Troubleshooting:\*\*
+\* Serve as the first point of contact for internal teams regarding application availability and performance issues.
+\* Troubleshoot and resolve technical problems related to Linux, windows environments where the application is deployed.
+\* Escalate complex issues to the application vendor and coordinate with them to ensure timely resolution and maintain service level agreements (SLAs).
+\*\*Security & Compliance:\*\*
+\* Coordinate with internal security teams to conduct Vulnerability Assessment and Penetration Testing (VAPT) and any compliance related evaluations pertaining to the application.
+\* Communicate findings from VAPT and compliance assessments to the application vendor.
+\* Track and ensure the closure of all identified security vulnerabilities and compliance concerns by liaising between internal teams and the vendor.
+\*\*Automation & Process Improvement:\*\*
+\* Utilize basic automation tools like Selenium to streamline repetitive processes and testing activities.
+\* Work with API requests and understand network configurations, including IPs and ports, for effective troubleshooting and deployment.
+\*\*Coordination & Communication:\*\*
+\* Demonstrate excellent communication and comprehension skills to effectively liaise with internal business users, technical teams, and external vendors.
+\* Facilitate testing and deployment cycles by coordinating activities between all relevant stakeholders.
+\* Verify with the vendor and internal teams that the application is working as expected after any upgrades or maintenance activities.
+\*\*Required Skills and Qualifications:\*\*
+\*\*Technical Skills:\*\*
+\* \*\*Experience with CRMNEXT application ecosystem, deployment etc would be preferable.\*\*
+\* \*\*Application/Web Servers : Tomcat, IIS, Apache, JBOSS etc.\*\*
+\* \*\*Operating Systems:\*\*
+Proficiency in
+\*\*Linux, Windows, MacOS\*\*
+.
+\* \*\*Databases:\*\*
+Hands-on experience with
+\*\*PostgreSQL, Oracle, MSSQL, MySQL, NoSQL\*\*
+deployment and knowledge of
+\*\*SQL/PL/SQL\*\*
+.
+\* \*\*Application Environment:\*\*
+Experience supporting java, .NET , python, Go etc. based applications.
+\* \*\*Security:\*\*
+Understanding of
+\*\*VAPT\*\*
+principles and processes.
+\* \*\*Automation:\*\*
+Basic knowledge of automation tools like
+\*\*Selenium, Cucumber, Browserstack etc.\*\*
+\* \*\*Knowledge of SSL, TLS v1.x etc is preferable.\*\*
+\* \*\*Networking: Understanding of IP addresses, and ports.\*\*
+\*\*Experience:\*\*
+\* 3-7 years of experience in a technical support, application support, or system deployment role.
+\*\*Soft Skills:\*\*
+\* \*\*Problem-Solving:\*\*
+Strong analytical and troubleshooting skills with the ability to work independently.
+\* \*\*Communication:\*\*
+Excellent written and verbal communication skills for effective coordination with technical and non-technical stakeholders.
+\* \*\*Ownership:\*\*
+A proactive mindset with a strong sense of responsibility for application uptime and stability.
+\* \*\*Collaboration:\*\*
+Ability to work effectively in a team-oriented, collaborative environment.
+\*\*Location & Work Environment:\*\*
+\* \*\*Location:\*\*
+This is an in-office role based at our
+\*\*Mumbai\*\*
+location.
+\* \*\*Company-Provided Equipment:\*\*
+To ensure secure and uninterrupted access to the HSL internal environment, a company-owned hardened and secure laptop will be provided.
+\* \*\*Work Schedule & Availability:\*\*
+This role requires the flexibility to be available on weekends or during late evenings for planned patching, upgrades, and testing. Availability is also required on non-working days to participate in critical activities like application Disaster Recovery (DR) drills to ensure business continuity.
+\*\*Educational Background:\*\*
+\*\*Bachelor’s Degree in a Technical Field\*\*
+, such as:
+\* \*\*Computer Science\*\*
+\* \*\*Information Technology\*\*
+\* \*\*Software Engineering\*\*
+\* \*\*Master’s Degree (MCA, M.Tech, etc.)\*\*
+in a relevant field could be an added advantage, especially for candidates with less experience.
+\* \*\*Certifications\*\*
+: Any relevant certifications would be good to have.","api, java, linux, log, python, sla",28,"Primary skills: linux, log, python, sla, Secondary skills: api, java, Development heavy; down-ranked, Experience: 3-7 years","sftp, servicenow, itil",Stretch Role,"Primary skills: linux, log, python, sla; Secondary skills: api, java; Development heavy; down-ranked; Experience: 3-7 years",False,,,,,,,,,,,,,,,,,,,,3-7 years,,,
+,Application Support Manager,PwC,"Bengaluru, Karnataka, India",linkedin,https://www.linkedin.com/jobs/view/4325373603,"At PwC, our people in information technology operations focus on managing and maintaining the technology infrastructure and systems to provide smooth operations and efficient delivery of IT services. This includes monitoring network performance, troubleshooting issues, and implementing security measures. Those in IT operations support at PwC will focus on providing technical assistance and troubleshooting to provide smooth functioning of IT systems and non-cloud based infrastructure. Your role will focus on providing L1 and possibly L2 support.
+Growing as a strategic advisor, you leverage your influence, expertise, and network to deliver quality results. You motivate and coach others, coming together to solve complex problems. As you increase in autonomy, you apply sound judgment, recognising when to take action and when to escalate. You are expected to solve through complexity, ask thoughtful questions, and clearly communicate how things fit together. Your ability to develop and sustain high performing, diverse, and inclusive teams, and your commitment to excellence, contributes to the success of our Firm.
+\*\*Skills\*\*
+Examples of the skills, knowledge, and experiences you need to lead and deliver value at this level include but are not limited to:
+\* Craft and convey clear, impactful and engaging messages that tell a holistic story.
+\* Apply systems thinking to identify underlying problems and/or opportunities.
+\* Validate outcomes with clients, share alternative perspectives, and act on client feedback.
+\* Direct the team through complexity, demonstrating composure through ambiguous, challenging and uncertain situations.
+\* Deepen and evolve your expertise with a focus on staying relevant.
+\* Initiate open and honest coaching conversations at all levels.
+\* Make difficult decisions and take action to resolve issues hindering team effectiveness.
+\* Model and reinforce professional and technical standards (e.g. refer to specific PwC tax and audit guidance), the Firm's code of conduct, and independence requirements.
+The Opportunity
+When you join PwC Acceleration Centers (ACs), you step into a pivotal role focused on actively supporting various Acceleration Center services, from Advisory to Assurance, Tax and Business Services. In our innovative hubs, you’ll engage in challenging projects and provide distinctive services to support client engagements through enhanced quality and innovation. You’ll also participate in dynamic and digitally enabled training that is designed to grow your technical and professional skills.
+As part of the Application Support team you will provide hands-on technical support and take ownership of the end-to-end management of Tax applications hosted on Azure. As a Senior Manager you will lead large projects, innovate processes, and maintain operational excellence while interacting with clients at a significant level to drive project success. This role offers the chance to mentor junior staff, enhance your technical skills, and collaborate with a global team to enable seamless support and knowledge continuity.
+\*\*Responsibilities\*\*
+\* Provide hands-on technical support for Tax applications on Azure
+\* Oversee the overall management of application processes
+\* Lead and drive large-scale projects to enhance operational effectiveness
+\* Mentor and develop junior team members to build proficiency
+\* Collaborate with global teams to promote knowledge sharing
+\* Innovate and implement process enhancements for seamless support
+\* Maintain client interactions to promote project success
+\* Uphold standards of operational excellence in every activity
+What You Must Have
+\* Bachelor's Degree
+\* 7 years of experience in hands-on application support and management
+\* Oral and written proficiency in English required
+What Sets You Apart
+\* Experience with Azure cloud platforms
+\* Skilled in scripting and automation
+\* Experience with CI/CD pipelines
+\* Understanding of ITIL processes
+\* Mentoring junior engineers
+\* Exceptional written and verbal communication skills
+\* Experience with monitoring tools
+\* Knowledge of Identity Management principles","azure, itil, log, monitor, monitoring",77,"Primary skills: azure, itil, log, monitor, monitoring, Cloud: Azure, ServiceNow/ITIL/incident, CI/CD, Experience: 7+ years","linux, sftp, servicenow",Strong Match,"Primary skills: azure, itil, log, monitor, monitoring; Cloud: Azure; ServiceNow/ITIL/incident; CI/CD; Experience: 7+ years",False,,,,,,,,,,,,,,,,,,,,7+ years,,,
+,HDFC Securities - IT Support Analyst - Trading Application,HDFC securities,worldwide,linkedin,https://www.linkedin.com/jobs/view/4335995947,"\*\*Key Responsibilities\*\*
+\* Lead System Integration Testing (SIT) for new implementations and system changes.
+\* Collaborate on technical infrastructure requirements for new projects.
+\* Manage and support UAT and Production environments, including deployments, patching, and issue resolution.
+\* Co-ordination with cross functional team business, product, software vendors, ISG, VAPT, Network, Firewall Security, Operations.
+\* Handle artifacts (Patch) deployments and ensure smooth rollouts across all environments.
+\* Understand and support end-to-end trading application flows, including integration with other enterprise systems.
+\*\*Required Skills & Knowledge\*\*
+\* Strong experience in Linux, Windows, SQL, Mongo DB, Oracle system administration.
+\* Basic understanding of networking concepts and firewall devices, ITIL Process management.
+\* Hands-on experience with application deployment, UAT and Production environment setup, and monitoring tools.
+\* Good understanding of trading domain workflows; prior exposure to broking or exchange environments is preferred.
+\* Excellent analytical, troubleshooting, and communication skills.
+\*\*Preferred Qualifications\*\*
+\* B.E or B.Tech.
+\* Experience working in financial services, especially in trading platforms.
+\* Familiarity with DevOps practices and automation tools is a plus.
+\*\*Location :\*\*
+Mumbai
+\*\*Experience :\*\*
+8-12 years
+(ref:hirist.tech)","devops, itil, linux, monitor, monitoring",61,"Primary skills: itil, linux, monitor, monitoring, Secondary skills: devops, ServiceNow/ITIL/incident, Experience: 8-12 years","sftp, servicenow",Good Match,"Primary skills: itil, linux, monitor, monitoring; Secondary skills: devops; ServiceNow/ITIL/incident; Experience: 8-12 years",False,,,,,,,,,,,,,,,,,,,,8-12 years,,,
+,Application Support For PWISE - Associate,BNP Paribas,"Mumbai, India",naukri,https://www.naukri.com/job-listings-application-support-for-pwise-associate-bnp-paribas-india-solutions-pvt-ltd-mumbai-6-to-11-years-221225907084,"Diploma or bachelors degree in IT,Computer Science,or related field
+Required Skills
+Experience with ticketing systems and support documentation tools
+Years Of Exp: 36 years of experience in technical support or helpdesk roles",,6,"Support/production oriented, Experience: 36+ years","linux, sftp, servicenow, itil",Ignore,Support/production oriented; Experience: 36+ years,False,Work from office,,,,,,,,,,,,,,,,,,,36+ years,,,
+,Senior Technical Specialist / User Support L3,Navsan,"Remote, India",naukri,https://www.naukri.com/job-listings-senior-technical-specialist-user-support-l3-navsan-hyderabad-8-to-13-years-221225004355,"Shift & Operational Responsibilities . Work in rotational shifts as part of a 24 / 7 or extended hours support model (as applicable)
+Ensure smooth handovers between shifts with complete documentation
+Willingness to work in shift-based schedules
+Handle issues related to MFA,conditional access failures,and general security alerts. .",alert,25,"Primary skills: alert, On-call / shift work, Support/production oriented","linux, sftp, servicenow, itil",Stretch Role,Primary skills: alert; On-call / shift work; Support/production oriented,True,Remote,,,,,,,,,,,,,,,,,,,,,,
+,Servicenow Architect,Calsoft,"Hybrid - Pune, Bengaluru, India",naukri,https://www.naukri.com/job-listings-servicenow-architect-calsoft-pune-bengaluru-10-to-20-years-211125009163,"Preferred Qualifications: ServiceNow Certifications (CSA,CIS,CAD) are preferred Exposure to additional modules like HRSD,SecOps,GRC / IRM,APM,Discovery,etc.,is a plus Experience in ServiceNow upgrades,performance tuning,and platform optimization
+Job Title: ServiceNow Architect Location: Pune preferred,other Calsoft locations .",servicenow,20,"Primary skills: servicenow, ServiceNow/ITIL/incident","linux, sftp, itil",Stretch Role,Primary skills: servicenow; ServiceNow/ITIL/incident,False,Hybrid,,,,,,,,,,,,,,,,,,,,,,
+,Vision Plus Support Engineer Mumbai For Core Banking domain,Clover Infotech,"Mumbai Suburbs, India",naukri,https://www.naukri.com/job-listings-vision-plus-support-engineer-mumbai-for-core-banking-domain-clover-infotech-mumbai-suburban-2-to-5-years-201225016961,"We are looking for Vision Plus Support Engineer who can join us immediately.
+\*\*Role & responsibilities required-\*\*
+\*\*Core Responsibilities\*\*
+\* \*\*System Monitoring & Health Checks\*\*: Perform daily validations and health checks across critical VisionPLUS modules such as \*\*CMS\*\* (Credit Management System), \*\*FAS\*\* (Financial Authorization System), \*\*TRAMS\*\* (Transaction Management System), and \*\*ITS\*\*.
+\* \*\*Incident Management (L1/L2)\*\*: Act as the first point of contact for technical glitches. Tasks include initial triage of user tickets, providing quick fixes, and handling escalations to L3 or development teams for complex issues.
+\* \*\*Batch Job Management\*\*: Monitor application and batch job alerts to ensure overnight processing of card transactions is completed without failure.
+\* \*\*Release & Patching Support\*\*: Coordinate with vendor and infrastructure teams for monthly release deployments, VAPT (Vulnerability Assessment and Penetration Testing) patching, and system upgrades.
+\* \*\*Documentation & Reporting\*\*: Maintain Standard Operating Procedures (SOPs) and a knowledge base for recurring issues. Prepare Root Cause Analysis (RCA) and incident reports for leadership review.
+\*\*Required Skills & Experience\*\*
+\* \*\*Experience\*\*: Typically requires \*\*2 to 6 years\*\* in L1/L2 application support, preferably within banking or card-related systems.
+\* \*\*Technical Knowledge\*\*:
++ Familiarity with \*\*VisionPLUS architecture\*\* and its core modules.
++ Experience with mainframe technologies such as \*\*JCL, COBOL, and CICS\*\* is often highly preferred.
++ Proficiency in database querying (SQL/DB2) and log analysis for troubleshooting.
+\* \*\*Tools\*\*: Experience using ITSM tools like \*\*ServiceNow\*\* or \*\*Remedy\*\* for tracking incidents.
+\* \*\*Certifications\*\*: Knowledge of \*\*ITIL practices\*\* is a standard requirement for these roles.
+\* \*\*Availability\*\*: Support roles at IndusInd Bank often require \*\*24/7 availability\*\* or shift rotations to maintain system uptime as per Service Level Agreements (SLAs).
+If interested please share your resume on swapna.gupta@cloverinfotech.com along with following details:-
+\* Total Experience -
+\* Relevant experience as Vision Plus Support -
+\* Education Qualification -
+\* Current Salary-
+\* Expected Salary-
+\* Notice Period/ LWD-
+\* Current Location-
+\* Ready to work from Mumbai(Y/N)
+\* Ready to Work From office
+\* Ready for rotational Shift (Y/N) -
+\* Reason for Change -
+\* Any offer inhand (Details) –
+\* Availability for technical discussion (Date & Time)-
+Best Regards,
+\*\*Swapna Gupta\*\*
+\*\*Assistant Vice President – Talent Acquisition\*\*
+Clover infotech Pvt Ltd., Mumbai
+Email id |swapna.gupta@cloverinfotech.com
+| www.cloverinfotech.com | Chat with us","alert, incident, itil, log, log analysis, monitor, monitoring, rest, servicenow, sla",80,"Primary skills: alert, incident, itil, log, log analysis, monitor, monitoring, servicenow, sla, Secondary skills: rest, On-call / shift work, ServiceNow/ITIL/incident, Experience: 2-6 years","linux, sftp",Strong Match,"Primary skills: alert, incident, itil, log, log analysis, monitor, monitoring, servicenow, sla; Secondary skills: rest; On-call / shift work; ServiceNow/ITIL/incident; Experience: 2-6 years",False,Work from office,,,,,,,,,,,,,,,,,,,2-6 years,,,
+,"Looking For Application Monitoring Engg-Grafana/Dynatrace,Servicenow",Clover Infotech,"Navi Mumbai, India",naukri,https://www.naukri.com/job-listings-looking-for-application-monitoring-engg-grafana-dynatrace-servicenow-clover-infotech-navi-mumbai-1-to-3-years-201225016888,"We are urgently hiring Application Monitoring Support Engineer for our prestigious client in Navi Mumbai.
+\*\*Role & responsibilities\*\*
+\* Looking for candidates interested for \*\*Application Monitoring\*\*
+\* Good handson experience in \*\*Grafana/ Dynatrace/ Promethus/ Service Now\*\*
+\* Must have Experience on ticketing tool, monitoring dashboards, basic troubleshooting. ITIL Process, Application related issues, Linux,
+\* Escalations ,monitoring. resolving issues within SLA, root cause analysis, prioritization. Incident Management, MS-SQL server, L1 Production Support, Pro-active monitoring, patching activity.
+\*\*Preferred candidate profile\*\*
+\* Experience Min 2yrs max 4yrs
+\* Must be a Graduate
+\* Wiilingness to work from office (Navi Mumbai)
+\* Willingness for rotational shift
+\* Must be ready to join immediately of selected.
+\* Should have good communication skills.
+\* Should be a team player.
+\* Must be able to handle pressure.
+If interested, please share your resume on swapna.gupta@cloverinfotech.com along with following details:-
+\* Total Experience -
+\* Experience in Application Monitoring -
+\* Relevant experience as Grafana/Promethus/ServiceNow -
+\* Education Qualification -
+\* Current Salary-
+\* Expected Salary-
+\* Notice Period/ LWD-
+\* Current Location-
+\* Ready to work from Navi Mumbai(Y/N)
+\* Ready to Work From office
+\* Ready for rotational Shift (Y/N) -
+\* Reason for Change -
+\* Any offer inhand (Details)
+\* Availability for technical discussion (Date & Time)-
+Best Regards,
+\*\*Swapna Gupta\*\*
+\*\*Assistant Vice President – Talent Acquisition\*\*
+Clover infotech Pvt Ltd., Mumbai
+Email id | swapna.gupta@cloverinfotech.com
+| www.cloverinfotech.com | Chat with us","grafana, incident, itil, linux, monitor, monitoring, rest, servicenow, sla",91,"Primary skills: incident, itil, linux, monitor, monitoring, servicenow, sla, Secondary skills: grafana, rest, On-call / shift work, ServiceNow/ITIL/incident, Support/production oriented",sftp,Strong Match,"Primary skills: incident, itil, linux, monitor, monitoring, servicenow, sla; Secondary skills: grafana, rest; On-call / shift work; ServiceNow/ITIL/incident; Support/production oriented",False,Work from office,,,,,,,,,,,,,,,,,,,,,,
