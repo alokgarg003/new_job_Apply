@@ -1,0 +1,9 @@
+# Additional runtime requirements for the web UI prototype
+fastapi
+uvicorn
+streamlit
+requests
+pandas
+openpyxl
+playwright
+httpx

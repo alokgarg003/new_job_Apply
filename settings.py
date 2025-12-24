@@ -34,6 +34,7 @@ NAUKRI_BAND_DELAY = 3.5
 NAUKRI_JOBS_PER_PAGE = 20
 NAUKRI_MAX_PAGES = 50
 
+'''
 # ---------- Profile (Alok‑specific) ----------
 PROFILE_PRIMARY_SKILLS = [
     "linux", "shell", "bash", "servicenow", "itil", "incident", "sla",
@@ -51,7 +52,28 @@ PROFILE_EXCLUDE_SIGNALS = [
     "frontend", "react", "vue", "angular", "ux", "ui",
     "dsa", "competitive programming",
 ]
+'''
+# ---------- Profile (Alok-specific, DevOps-focused) ----------
 
+PROFILE_PRIMARY_SKILLS = [
+    "linux", "shell", "bash", "python", "jenkins", "bitbucket",
+    "azure", "aws", "terraform", "ci_cd", "automation", "cloudops",
+    "monitoring", "alerting", "log_analysis", "network_fundamentals",
+    "mft", "sftp", "ftps", "ftp", "as2", "goanywhere", "fms", "ftg",
+    "servicenow", "itil", "incident_management", "sla_management"
+]
+
+PROFILE_SECONDARY_SKILLS = [
+    "java", "spring boot", "rest api", "microservices", "docker", "kubernetes",
+    "observability", "grafana", "prometheus", "databricks", "spark"
+]
+
+PROFILE_EXCLUDE_SIGNALS = [
+    "frontend", "react", "vue", "angular", "ux", "ui",
+    "dsa", "competitive programming", "html", "css", "design_patterns_frontend"
+]
+ 
+ 
 # Evaluation weights (tweak as needed)
 EVAL_PRIMARY_WEIGHT = 12
 EVAL_SECONDARY_WEIGHT = 5

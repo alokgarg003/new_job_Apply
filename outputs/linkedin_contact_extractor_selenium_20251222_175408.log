@@ -1,0 +1,564 @@
+2025-12-22 23:24:08,332 INFO Starting authenticated run: headless=False workers=1 single_driver=True
+2025-12-22 23:24:23,570 INFO Logged into LinkedIn as alokgarg003@gmail.com
+2025-12-22 23:24:23,625 INFO Processing batch 1 (size=5)
+2025-12-22 23:24:29,019 INFO Parsed https://www.linkedin.com/in/abhiraj-yadav-01213333b
+2025-12-22 23:24:35,344 INFO Parsed https://www.linkedin.com/in/jonmayhall
+2025-12-22 23:24:55,123 DEBUG Fetch timeout for https://www.linkedin.com/in/yalena-young/overlay/contact-info/ — title=Yalena Yang | LinkedIn cookies=22 snippet=<html lang="en" class="theme theme--mercado app-loader--default artdeco windows"><head><meta http-equiv="origin-trial" content="A7vZI3v+Gz7JfuRolKNM4Aff6zaGuT7X0mf3wtoZTnKv6497cVMnhy03KDqX7kBz/q/iidW7srW31oQbBt4VhgoAAACUeyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGUuY29tOjQ0MyIsImZlYXR1cmUiOiJEaXNhYmxlVGhpcmRQYXJ0eVN0b3JhZ2VQYXJ0aXRpb25pbmczIiwiZXhwaXJ5IjoxNzU3OTgwODAwLCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ==">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'report-sa...
+2025-12-22 23:24:55,142 DEBUG Failed https://www.linkedin.com/in/yalena-young attempt 1/2: login_required
+2025-12-22 23:25:16,433 DEBUG Fetch timeout for https://www.linkedin.com/in/yalena-young/overlay/contact-info/ — title=Yalena Yang | LinkedIn cookies=22 snippet=<html lang="en" class="theme theme--mercado app-loader--default artdeco windows"><head><meta http-equiv="origin-trial" content="A7vZI3v+Gz7JfuRolKNM4Aff6zaGuT7X0mf3wtoZTnKv6497cVMnhy03KDqX7kBz/q/iidW7srW31oQbBt4VhgoAAACUeyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGUuY29tOjQ0MyIsImZlYXR1cmUiOiJEaXNhYmxlVGhpcmRQYXJ0eVN0b3JhZ2VQYXJ0aXRpb25pbmczIiwiZXhwaXJ5IjoxNzU3OTgwODAwLCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ==">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'report-sa...
+2025-12-22 23:25:16,445 DEBUG Failed https://www.linkedin.com/in/yalena-young attempt 2/2: login_required
+2025-12-22 23:25:41,427 DEBUG Fetch timeout for https://www.linkedin.com/in/yalena-young/overlay/contact-info/ — title=Yalena Yang | LinkedIn cookies=22 snippet=<html lang="en" class="theme theme--mercado app-loader--default artdeco windows"><head><meta http-equiv="origin-trial" content="A7vZI3v+Gz7JfuRolKNM4Aff6zaGuT7X0mf3wtoZTnKv6497cVMnhy03KDqX7kBz/q/iidW7srW31oQbBt4VhgoAAACUeyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGUuY29tOjQ0MyIsImZlYXR1cmUiOiJEaXNhYmxlVGhpcmRQYXJ0eVN0b3JhZ2VQYXJ0aXRpb25pbmczIiwiZXhwaXJ5IjoxNzU3OTgwODAwLCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ==">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'report-sa...
+2025-12-22 23:25:41,438 DEBUG Failed https://www.linkedin.com/in/yalena-young attempt 3/2: login_required
+2025-12-22 23:25:47,814 INFO Parsed https://www.linkedin.com/in/glodymateta
+2025-12-22 23:25:54,444 INFO Parsed https://www.linkedin.com/in/rishika-sardana
+2025-12-22 23:25:56,098 INFO Wrote batch checkpoints outputs\public_batch_0000.csv and outputs\private_batch_0000.csv
+2025-12-22 23:25:57,599 INFO Processing batch 2 (size=5)
+2025-12-22 23:26:15,094 DEBUG Fetch timeout for https://www.linkedin.com/in/ishivrathore/overlay/contact-info/ — title=Shivpal Singh | LinkedIn cookies=22 snippet=<html lang="en" class="theme theme--mercado app-loader--default artdeco windows"><head><meta http-equiv="origin-trial" content="A7vZI3v+Gz7JfuRolKNM4Aff6zaGuT7X0mf3wtoZTnKv6497cVMnhy03KDqX7kBz/q/iidW7srW31oQbBt4VhgoAAACUeyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGUuY29tOjQ0MyIsImZlYXR1cmUiOiJEaXNhYmxlVGhpcmRQYXJ0eVN0b3JhZ2VQYXJ0aXRpb25pbmczIiwiZXhwaXJ5IjoxNzU3OTgwODAwLCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ==">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'report-sa...
+2025-12-22 23:26:15,105 DEBUG Failed https://www.linkedin.com/in/ishivrathore attempt 1/2: login_required
+2025-12-22 23:26:36,947 DEBUG Fetch timeout for https://www.linkedin.com/in/ishivrathore/overlay/contact-info/ — title=Shivpal Singh | LinkedIn cookies=22 snippet=<html lang="en" class="theme theme--mercado app-loader--default artdeco windows"><head><meta http-equiv="origin-trial" content="A7vZI3v+Gz7JfuRolKNM4Aff6zaGuT7X0mf3wtoZTnKv6497cVMnhy03KDqX7kBz/q/iidW7srW31oQbBt4VhgoAAACUeyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGUuY29tOjQ0MyIsImZlYXR1cmUiOiJEaXNhYmxlVGhpcmRQYXJ0eVN0b3JhZ2VQYXJ0aXRpb25pbmczIiwiZXhwaXJ5IjoxNzU3OTgwODAwLCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ==">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'report-sa...
+2025-12-22 23:26:36,957 DEBUG Failed https://www.linkedin.com/in/ishivrathore attempt 2/2: login_required
+2025-12-22 23:27:01,869 DEBUG Fetch timeout for https://www.linkedin.com/in/ishivrathore/overlay/contact-info/ — title=Shivpal Singh | LinkedIn cookies=22 snippet=<html lang="en" class="theme theme--mercado app-loader--default artdeco windows"><head><meta http-equiv="origin-trial" content="A7vZI3v+Gz7JfuRolKNM4Aff6zaGuT7X0mf3wtoZTnKv6497cVMnhy03KDqX7kBz/q/iidW7srW31oQbBt4VhgoAAACUeyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGUuY29tOjQ0MyIsImZlYXR1cmUiOiJEaXNhYmxlVGhpcmRQYXJ0eVN0b3JhZ2VQYXJ0aXRpb25pbmczIiwiZXhwaXJ5IjoxNzU3OTgwODAwLCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ==">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'report-sa...
+2025-12-22 23:27:01,878 DEBUG Failed https://www.linkedin.com/in/ishivrathore attempt 3/2: login_required
+2025-12-22 23:27:09,502 INFO Parsed https://www.linkedin.com/in/chandra-sagar-b5a370b6
+2025-12-22 23:27:17,404 INFO Parsed https://www.linkedin.com/in/harshalrahangdale
+2025-12-22 23:27:24,856 INFO Parsed https://www.linkedin.com/in/anshu-patil-58b562208
+2025-12-22 23:27:33,221 INFO Parsed https://www.linkedin.com/in/pallavidatta
+2025-12-22 23:27:34,729 INFO Wrote batch checkpoints outputs\public_batch_0001.csv and outputs\private_batch_0001.csv
+2025-12-22 23:27:36,229 INFO Processing batch 3 (size=5)
+2025-12-22 23:27:41,751 INFO Parsed https://www.linkedin.com/in/sulabh-jain-676946256
+2025-12-22 23:28:04,421 DEBUG Fetch timeout for https://www.linkedin.com/in/shakunthala-m-83326b83/overlay/contact-info/ — title=Shakunthala Mishra | LinkedIn cookies=23 snippet=<html lang="en" class="theme theme--mercado app-loader--default artdeco windows"><head><meta http-equiv="origin-trial" content="A7vZI3v+Gz7JfuRolKNM4Aff6zaGuT7X0mf3wtoZTnKv6497cVMnhy03KDqX7kBz/q/iidW7srW31oQbBt4VhgoAAACUeyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGUuY29tOjQ0MyIsImZlYXR1cmUiOiJEaXNhYmxlVGhpcmRQYXJ0eVN0b3JhZ2VQYXJ0aXRpb25pbmczIiwiZXhwaXJ5IjoxNzU3OTgwODAwLCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ==">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'report-sa...
+2025-12-22 23:28:04,431 DEBUG Failed https://www.linkedin.com/in/shakunthala-m-83326b83 attempt 1/2: login_required
+2025-12-22 23:28:27,575 DEBUG Fetch timeout for https://www.linkedin.com/in/shakunthala-m-83326b83/overlay/contact-info/ — title=Shakunthala Mishra | LinkedIn cookies=23 snippet=<html lang="en" class="theme theme--mercado app-loader--default artdeco windows"><head><meta http-equiv="origin-trial" content="A7vZI3v+Gz7JfuRolKNM4Aff6zaGuT7X0mf3wtoZTnKv6497cVMnhy03KDqX7kBz/q/iidW7srW31oQbBt4VhgoAAACUeyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGUuY29tOjQ0MyIsImZlYXR1cmUiOiJEaXNhYmxlVGhpcmRQYXJ0eVN0b3JhZ2VQYXJ0aXRpb25pbmczIiwiZXhwaXJ5IjoxNzU3OTgwODAwLCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ==">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'report-sa...
+2025-12-22 23:28:27,585 DEBUG Failed https://www.linkedin.com/in/shakunthala-m-83326b83 attempt 2/2: login_required
+2025-12-22 23:28:51,972 DEBUG Fetch timeout for https://www.linkedin.com/in/shakunthala-m-83326b83/overlay/contact-info/ — title=Shakunthala Mishra | LinkedIn cookies=23 snippet=<html lang="en" class="theme theme--mercado app-loader--default artdeco windows"><head><meta http-equiv="origin-trial" content="A7vZI3v+Gz7JfuRolKNM4Aff6zaGuT7X0mf3wtoZTnKv6497cVMnhy03KDqX7kBz/q/iidW7srW31oQbBt4VhgoAAACUeyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGUuY29tOjQ0MyIsImZlYXR1cmUiOiJEaXNhYmxlVGhpcmRQYXJ0eVN0b3JhZ2VQYXJ0aXRpb25pbmczIiwiZXhwaXJ5IjoxNzU3OTgwODAwLCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ==">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'report-sa...
+2025-12-22 23:28:51,982 DEBUG Failed https://www.linkedin.com/in/shakunthala-m-83326b83 attempt 3/2: login_required
+2025-12-22 23:28:58,467 INFO Parsed https://www.linkedin.com/in/abhishek-n-593191236
+2025-12-22 23:29:04,412 INFO Parsed https://www.linkedin.com/in/shreya-singh-278321249
+2025-12-22 23:29:10,448 INFO Parsed https://www.linkedin.com/in/pooja-thapa-3229a2258
+2025-12-22 23:29:12,033 INFO Wrote batch checkpoints outputs\public_batch_0002.csv and outputs\private_batch_0002.csv
+2025-12-22 23:29:13,534 INFO Processing batch 4 (size=5)
+2025-12-22 23:29:18,563 INFO Parsed https://www.linkedin.com/in/digital-rishabh
+2025-12-22 23:29:25,406 INFO Parsed https://www.linkedin.com/in/sakshi-bissa-94a571175
+2025-12-22 23:29:31,438 INFO Parsed https://www.linkedin.com/in/fhalakkhanna
+2025-12-22 23:29:39,268 INFO Parsed https://www.linkedin.com/in/heta-shah-0ab81215a
+2025-12-22 23:29:45,604 INFO Parsed https://www.linkedin.com/in/ravi-graham-411792121
+2025-12-22 23:29:47,246 INFO Wrote batch checkpoints outputs\public_batch_0003.csv and outputs\private_batch_0003.csv
+2025-12-22 23:29:48,747 INFO Processing batch 5 (size=5)
+2025-12-22 23:29:53,905 INFO Parsed https://www.linkedin.com/in/kosha-trivedi
+2025-12-22 23:30:00,343 INFO Parsed https://www.linkedin.com/in/harsh-sen-0b3ba6237
+2025-12-22 23:30:06,843 INFO Parsed https://www.linkedin.com/in/akanshathool
+2025-12-22 23:30:26,907 DEBUG Fetch timeout for https://www.linkedin.com/in/oliviasantoss/overlay/contact-info/ — title=Olivia Santos, CHRP | LinkedIn cookies=23 snippet=<html lang="en" class="theme theme--mercado app-loader--default artdeco windows"><head><meta http-equiv="origin-trial" content="A7vZI3v+Gz7JfuRolKNM4Aff6zaGuT7X0mf3wtoZTnKv6497cVMnhy03KDqX7kBz/q/iidW7srW31oQbBt4VhgoAAACUeyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGUuY29tOjQ0MyIsImZlYXR1cmUiOiJEaXNhYmxlVGhpcmRQYXJ0eVN0b3JhZ2VQYXJ0aXRpb25pbmczIiwiZXhwaXJ5IjoxNzU3OTgwODAwLCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ==">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'report-sa...
+2025-12-22 23:30:26,920 DEBUG Failed https://www.linkedin.com/in/oliviasantoss attempt 1/2: login_required
+2025-12-22 23:30:47,840 DEBUG Fetch timeout for https://www.linkedin.com/in/oliviasantoss/overlay/contact-info/ — title=Olivia Santos, CHRP | LinkedIn cookies=23 snippet=<html lang="en" class="theme theme--mercado app-loader--default artdeco windows"><head><meta http-equiv="origin-trial" content="A7vZI3v+Gz7JfuRolKNM4Aff6zaGuT7X0mf3wtoZTnKv6497cVMnhy03KDqX7kBz/q/iidW7srW31oQbBt4VhgoAAACUeyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGUuY29tOjQ0MyIsImZlYXR1cmUiOiJEaXNhYmxlVGhpcmRQYXJ0eVN0b3JhZ2VQYXJ0aXRpb25pbmczIiwiZXhwaXJ5IjoxNzU3OTgwODAwLCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ==">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'report-sa...
+2025-12-22 23:30:47,853 DEBUG Failed https://www.linkedin.com/in/oliviasantoss attempt 2/2: login_required
+2025-12-22 23:31:12,347 DEBUG Fetch timeout for https://www.linkedin.com/in/oliviasantoss/overlay/contact-info/ — title=Olivia Santos, CHRP | LinkedIn cookies=23 snippet=<html lang="en" class="theme theme--mercado app-loader--default artdeco windows"><head><meta http-equiv="origin-trial" content="A7vZI3v+Gz7JfuRolKNM4Aff6zaGuT7X0mf3wtoZTnKv6497cVMnhy03KDqX7kBz/q/iidW7srW31oQbBt4VhgoAAACUeyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGUuY29tOjQ0MyIsImZlYXR1cmUiOiJEaXNhYmxlVGhpcmRQYXJ0eVN0b3JhZ2VQYXJ0aXRpb25pbmczIiwiZXhwaXJ5IjoxNzU3OTgwODAwLCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ==">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'report-sa...
+2025-12-22 23:31:12,360 DEBUG Failed https://www.linkedin.com/in/oliviasantoss attempt 3/2: login_required
+2025-12-22 23:31:18,902 INFO Parsed https://www.linkedin.com/in/mercy-mocha-ba-cipm-000a544a
+2025-12-22 23:31:20,528 INFO Wrote batch checkpoints outputs\public_batch_0004.csv and outputs\private_batch_0004.csv
+2025-12-22 23:31:22,029 INFO Processing batch 6 (size=5)
+2025-12-22 23:31:26,038 INFO Parsed https://www.linkedin.com/in/vikash-kumar-2a1a05256
+2025-12-22 23:31:31,894 INFO Parsed https://www.linkedin.com/in/keerthy-p-r-8580b01a5
+2025-12-22 23:31:38,749 INFO Parsed https://www.linkedin.com/in/caseyjmckay511
+2025-12-22 23:31:45,054 INFO Parsed https://www.linkedin.com/in/konstantin-chikin-%E5%90%AF%E8%82%AF-4037a317
+2025-12-22 23:31:51,332 INFO Parsed https://www.linkedin.com/in/shantanu-ghosh-2b47025
+2025-12-22 23:31:52,939 INFO Wrote batch checkpoints outputs\public_batch_0005.csv and outputs\private_batch_0005.csv
+2025-12-22 23:31:54,441 INFO Processing batch 7 (size=5)
+2025-12-22 23:31:59,376 INFO Parsed https://www.linkedin.com/in/chirag-lal
+2025-12-22 23:32:05,729 INFO Parsed https://www.linkedin.com/in/oybek-anvarov
+2025-12-22 23:32:12,537 INFO Parsed https://www.linkedin.com/in/raviteja-bylapudi-53abab63
+2025-12-22 23:32:19,072 INFO Parsed https://www.linkedin.com/in/advswheta-maity-1809j0354
+2025-12-22 23:32:25,251 INFO Parsed https://www.linkedin.com/in/khalid-s-197ab5223
+2025-12-22 23:32:26,811 INFO Wrote batch checkpoints outputs\public_batch_0006.csv and outputs\private_batch_0006.csv
+2025-12-22 23:32:28,311 INFO Processing batch 8 (size=5)
+2025-12-22 23:32:46,278 DEBUG Fetch timeout for https://www.linkedin.com/in/cristina-capus-94737540/overlay/contact-info/ — title=(1) Cristina Capus | LinkedIn cookies=23 snippet=<html lang="en" class="theme theme--mercado app-loader--default artdeco windows"><head><meta http-equiv="origin-trial" content="A7vZI3v+Gz7JfuRolKNM4Aff6zaGuT7X0mf3wtoZTnKv6497cVMnhy03KDqX7kBz/q/iidW7srW31oQbBt4VhgoAAACUeyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGUuY29tOjQ0MyIsImZlYXR1cmUiOiJEaXNhYmxlVGhpcmRQYXJ0eVN0b3JhZ2VQYXJ0aXRpb25pbmczIiwiZXhwaXJ5IjoxNzU3OTgwODAwLCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ==">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'report-sa...
+2025-12-22 23:32:46,290 DEBUG Failed https://www.linkedin.com/in/cristina-capus-94737540 attempt 1/2: login_required
+2025-12-22 23:33:07,952 DEBUG Fetch timeout for https://www.linkedin.com/in/cristina-capus-94737540/overlay/contact-info/ — title=(1) Cristina Capus | LinkedIn cookies=23 snippet=<html lang="en" class="theme theme--mercado app-loader--default artdeco windows"><head><meta http-equiv="origin-trial" content="A7vZI3v+Gz7JfuRolKNM4Aff6zaGuT7X0mf3wtoZTnKv6497cVMnhy03KDqX7kBz/q/iidW7srW31oQbBt4VhgoAAACUeyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGUuY29tOjQ0MyIsImZlYXR1cmUiOiJEaXNhYmxlVGhpcmRQYXJ0eVN0b3JhZ2VQYXJ0aXRpb25pbmczIiwiZXhwaXJ5IjoxNzU3OTgwODAwLCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ==">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'report-sa...
+2025-12-22 23:33:07,964 DEBUG Failed https://www.linkedin.com/in/cristina-capus-94737540 attempt 2/2: login_required
+2025-12-22 23:33:58,978 ERROR Selenium error fetching https://www.linkedin.com/in/cristina-capus-94737540/overlay/contact-info/: Message: unknown error: net::ERR_NAME_NOT_RESOLVED
+  (Session info: chrome=143.0.7499.147)
+Stacktrace:
+Symbols not available. Dumping unresolved backtrace:
+	0xac12d3
+	0xac1314
+	0x8ae6dd
+	0x8abc86
+	0x89ef92
+	0x8a094a
+	0x89f435
+	0x89ed71
+	0x89ea85
+	0x89c94f
+	0x89d31a
+	0x8b2451
+	0x93e704
+	0x91b4ec
+	0x93db13
+	0x91b2e6
+	0x8ed321
+	0x8ee1d4
+	0xd15314
+	0xd108cb
+	0xd2d1aa
+	0xadb1d8
+	0xae31dd
+	0xac95d8
+	0xac9799
+	0xab3b28
+	0x76255d49
+	0x7764d5db
+	0x7764d561
+Traceback (most recent call last):
+  File "C:\Users\hp\Desktop\Jobs_Data\Practice_scraping\JobSpy-main\JobSpy-main\removed_scripts\linkedin_contact_extractor_selenium.py", line 219, in fetch_overlay
+    driver.get(contact_url)
+    ~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\hp\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\remote\webdriver.py", line 452, in get
+    self.execute(Command.GET, {"url": url})
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hp\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\remote\webdriver.py", line 432, in execute
+    self.error_handler.check_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\hp\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.WebDriverException: Message: unknown error: net::ERR_NAME_NOT_RESOLVED
+  (Session info: chrome=143.0.7499.147)
+Stacktrace:
+Symbols not available. Dumping unresolved backtrace:
+	0xac12d3
+	0xac1314
+	0x8ae6dd
+	0x8abc86
+	0x89ef92
+	0x8a094a
+	0x89f435
+	0x89ed71
+	0x89ea85
+	0x89c94f
+	0x89d31a
+	0x8b2451
+	0x93e704
+	0x91b4ec
+	0x93db13
+	0x91b2e6
+	0x8ed321
+	0x8ee1d4
+	0xd15314
+	0xd108cb
+	0xd2d1aa
+	0xadb1d8
+	0xae31dd
+	0xac95d8
+	0xac9799
+	0xab3b28
+	0x76255d49
+	0x7764d5db
+	0x7764d561
+
+2025-12-22 23:33:58,980 DEBUG Failed https://www.linkedin.com/in/cristina-capus-94737540 attempt 3/2: Message: unknown error: net::ERR_NAME_NOT_RESOLVED
+  (Session info: chrome=143.0.7499.147)
+Stacktrace:
+Symbols not available. Dumping unresolved backtrace:
+	0xac12d3
+	0xac1314
+	0x8ae6dd
+	0x8abc86
+	0x89ef92
+	0x8a094a
+	0x89f435
+	0x89ed71
+	0x89ea85
+	0x89c94f
+	0x89d31a
+	0x8b2451
+	0x93e704
+	0x91b4ec
+	0x93db13
+	0x91b2e6
+	0x8ed321
+	0x8ee1d4
+	0xd15314
+	0xd108cb
+	0xd2d1aa
+	0xadb1d8
+	0xae31dd
+	0xac95d8
+	0xac9799
+	0xab3b28
+	0x76255d49
+	0x7764d5db
+	0x7764d561
+
+2025-12-22 23:34:28,582 ERROR Selenium error fetching https://www.linkedin.com/in/webtechguru/overlay/contact-info/: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=143.0.7499.147)
+Stacktrace:
+Symbols not available. Dumping unresolved backtrace:
+	0xac12d3
+	0xac1314
+	0x8ae6dd
+	0x88ca8d
+	0x921ffb
+	0x93d44c
+	0x91b2e6
+	0x8ed321
+	0x8ee1d4
+	0xd15314
+	0xd108cb
+	0xd2d1aa
+	0xadb1d8
+	0xae31dd
+	0xac95d8
+	0xac9799
+	0xab3b28
+	0x76255d49
+	0x7764d5db
+	0x7764d561
+Traceback (most recent call last):
+  File "C:\Users\hp\Desktop\Jobs_Data\Practice_scraping\JobSpy-main\JobSpy-main\removed_scripts\linkedin_contact_extractor_selenium.py", line 223, in fetch_overlay
+    wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "a[href^='mailto:'], a[href^='tel:'], .pv-contact-info")))
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hp\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\support\wait.py", line 113, in until
+    value = method(self._driver)
+  File "C:\Users\hp\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\support\expected_conditions.py", line 92, in _predicate
+    return driver.find_element(*locator)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\hp\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\remote\webdriver.py", line 802, in find_element
+    return self.execute(Command.FIND_ELEMENT, {"using": by, "value": value})["value"]
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hp\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\remote\webdriver.py", line 432, in execute
+    self.error_handler.check_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\hp\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.NoSuchWindowException: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=143.0.7499.147)
+Stacktrace:
+Symbols not available. Dumping unresolved backtrace:
+	0xac12d3
+	0xac1314
+	0x8ae6dd
+	0x88ca8d
+	0x921ffb
+	0x93d44c
+	0x91b2e6
+	0x8ed321
+	0x8ee1d4
+	0xd15314
+	0xd108cb
+	0xd2d1aa
+	0xadb1d8
+	0xae31dd
+	0xac95d8
+	0xac9799
+	0xab3b28
+	0x76255d49
+	0x7764d5db
+	0x7764d561
+
+2025-12-22 23:34:28,586 DEBUG Failed https://www.linkedin.com/in/webtechguru attempt 1/2: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=143.0.7499.147)
+Stacktrace:
+Symbols not available. Dumping unresolved backtrace:
+	0xac12d3
+	0xac1314
+	0x8ae6dd
+	0x88ca8d
+	0x921ffb
+	0x93d44c
+	0x91b2e6
+	0x8ed321
+	0x8ee1d4
+	0xd15314
+	0xd108cb
+	0xd2d1aa
+	0xadb1d8
+	0xae31dd
+	0xac95d8
+	0xac9799
+	0xab3b28
+	0x76255d49
+	0x7764d5db
+	0x7764d561
+
+2025-12-22 23:34:31,730 ERROR Selenium error fetching https://www.linkedin.com/in/webtechguru/overlay/contact-info/: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=143.0.7499.147)
+Stacktrace:
+Symbols not available. Dumping unresolved backtrace:
+	0xac12d3
+	0xac1314
+	0x8ae6dd
+	0x88ca8d
+	0x921ffb
+	0x93d44c
+	0x91b2e6
+	0x8ed321
+	0x8ee1d4
+	0xd15314
+	0xd108cb
+	0xd2d1aa
+	0xadb1d8
+	0xae31dd
+	0xac95d8
+	0xac9799
+	0xab3b28
+	0x76255d49
+	0x7764d5db
+	0x7764d561
+Traceback (most recent call last):
+  File "C:\Users\hp\Desktop\Jobs_Data\Practice_scraping\JobSpy-main\JobSpy-main\removed_scripts\linkedin_contact_extractor_selenium.py", line 219, in fetch_overlay
+    driver.get(contact_url)
+    ~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\hp\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\remote\webdriver.py", line 452, in get
+    self.execute(Command.GET, {"url": url})
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hp\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\remote\webdriver.py", line 432, in execute
+    self.error_handler.check_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\hp\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.NoSuchWindowException: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=143.0.7499.147)
+Stacktrace:
+Symbols not available. Dumping unresolved backtrace:
+	0xac12d3
+	0xac1314
+	0x8ae6dd
+	0x88ca8d
+	0x921ffb
+	0x93d44c
+	0x91b2e6
+	0x8ed321
+	0x8ee1d4
+	0xd15314
+	0xd108cb
+	0xd2d1aa
+	0xadb1d8
+	0xae31dd
+	0xac95d8
+	0xac9799
+	0xab3b28
+	0x76255d49
+	0x7764d5db
+	0x7764d561
+
+2025-12-22 23:34:31,736 DEBUG Failed https://www.linkedin.com/in/webtechguru attempt 2/2: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=143.0.7499.147)
+Stacktrace:
+Symbols not available. Dumping unresolved backtrace:
+	0xac12d3
+	0xac1314
+	0x8ae6dd
+	0x88ca8d
+	0x921ffb
+	0x93d44c
+	0x91b2e6
+	0x8ed321
+	0x8ee1d4
+	0xd15314
+	0xd108cb
+	0xd2d1aa
+	0xadb1d8
+	0xae31dd
+	0xac95d8
+	0xac9799
+	0xab3b28
+	0x76255d49
+	0x7764d5db
+	0x7764d561
+
+2025-12-22 23:34:37,856 ERROR Selenium error fetching https://www.linkedin.com/in/webtechguru/overlay/contact-info/: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=143.0.7499.147)
+Stacktrace:
+Symbols not available. Dumping unresolved backtrace:
+	0xac12d3
+	0xac1314
+	0x8ae6dd
+	0x88ca8d
+	0x921ffb
+	0x93d44c
+	0x91b2e6
+	0x8ed321
+	0x8ee1d4
+	0xd15314
+	0xd108cb
+	0xd2d1aa
+	0xadb1d8
+	0xae31dd
+	0xac95d8
+	0xac9799
+	0xab3b28
+	0x76255d49
+	0x7764d5db
+	0x7764d561
+Traceback (most recent call last):
+  File "C:\Users\hp\Desktop\Jobs_Data\Practice_scraping\JobSpy-main\JobSpy-main\removed_scripts\linkedin_contact_extractor_selenium.py", line 219, in fetch_overlay
+    driver.get(contact_url)
+    ~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\hp\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\remote\webdriver.py", line 452, in get
+    self.execute(Command.GET, {"url": url})
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hp\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\remote\webdriver.py", line 432, in execute
+    self.error_handler.check_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\hp\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.NoSuchWindowException: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=143.0.7499.147)
+Stacktrace:
+Symbols not available. Dumping unresolved backtrace:
+	0xac12d3
+	0xac1314
+	0x8ae6dd
+	0x88ca8d
+	0x921ffb
+	0x93d44c
+	0x91b2e6
+	0x8ed321
+	0x8ee1d4
+	0xd15314
+	0xd108cb
+	0xd2d1aa
+	0xadb1d8
+	0xae31dd
+	0xac95d8
+	0xac9799
+	0xab3b28
+	0x76255d49
+	0x7764d5db
+	0x7764d561
+
+2025-12-22 23:34:37,858 DEBUG Failed https://www.linkedin.com/in/webtechguru attempt 3/2: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=143.0.7499.147)
+Stacktrace:
+Symbols not available. Dumping unresolved backtrace:
+	0xac12d3
+	0xac1314
+	0x8ae6dd
+	0x88ca8d
+	0x921ffb
+	0x93d44c
+	0x91b2e6
+	0x8ed321
+	0x8ee1d4
+	0xd15314
+	0xd108cb
+	0xd2d1aa
+	0xadb1d8
+	0xae31dd
+	0xac95d8
+	0xac9799
+	0xab3b28
+	0x76255d49
+	0x7764d5db
+	0x7764d561
+
+2025-12-22 23:34:39,483 ERROR Selenium error fetching https://www.linkedin.com/in/iampritampaul/overlay/contact-info/: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=143.0.7499.147)
+Stacktrace:
+Symbols not available. Dumping unresolved backtrace:
+	0xac12d3
+	0xac1314
+	0x8ae6dd
+	0x88ca8d
+	0x921ffb
+	0x93d44c
+	0x91b2e6
+	0x8ed321
+	0x8ee1d4
+	0xd15314
+	0xd108cb
+	0xd2d1aa
+	0xadb1d8
+	0xae31dd
+	0xac95d8
+	0xac9799
+	0xab3b28
+	0x76255d49
+	0x7764d5db
+	0x7764d561
+Traceback (most recent call last):
+  File "C:\Users\hp\Desktop\Jobs_Data\Practice_scraping\JobSpy-main\JobSpy-main\removed_scripts\linkedin_contact_extractor_selenium.py", line 219, in fetch_overlay
+    driver.get(contact_url)
+    ~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\hp\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\remote\webdriver.py", line 452, in get
+    self.execute(Command.GET, {"url": url})
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hp\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\remote\webdriver.py", line 432, in execute
+    self.error_handler.check_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\hp\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.NoSuchWindowException: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=143.0.7499.147)
+Stacktrace:
+Symbols not available. Dumping unresolved backtrace:
+	0xac12d3
+	0xac1314
+	0x8ae6dd
+	0x88ca8d
+	0x921ffb
+	0x93d44c
+	0x91b2e6
+	0x8ed321
+	0x8ee1d4
+	0xd15314
+	0xd108cb
+	0xd2d1aa
+	0xadb1d8
+	0xae31dd
+	0xac95d8
+	0xac9799
+	0xab3b28
+	0x76255d49
+	0x7764d5db
+	0x7764d561
+
+2025-12-22 23:34:39,485 DEBUG Failed https://www.linkedin.com/in/iampritampaul attempt 1/2: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=143.0.7499.147)
+Stacktrace:
+Symbols not available. Dumping unresolved backtrace:
+	0xac12d3
+	0xac1314
+	0x8ae6dd
+	0x88ca8d
+	0x921ffb
+	0x93d44c
+	0x91b2e6
+	0x8ed321
+	0x8ee1d4
+	0xd15314
+	0xd108cb
+	0xd2d1aa
+	0xadb1d8
+	0xae31dd
+	0xac95d8
+	0xac9799
+	0xab3b28
+	0x76255d49
+	0x7764d5db
+	0x7764d561
+
