@@ -1,0 +1,726 @@
+📘 Build Doc — Public-Only Job Sourcing (Naukri + Indeed + Hirist + ATS JSON)
+Owner: Alok Garg
+Goal: Fetch relevant jobs (aligned to your resume, prioritizing remote/hybrid) from public sources with no login and minimal dependencies, produce one consolidated output (jobs.json + jobs.csv), and avoid data loss by systematically planning URLs before execution.
+Dependencies: requests, beautifulsoup4 (BS4); everything else is Python standard library.
+
+1) Inputs & Configuration
+1.1 Keywords (resume‑derived)
+PythonKEYWORDS = [  "L1 monitoring","DLP","CASB",  "GoAnywhere","MFT","FMS","FTG",  "SFTP","FTPS","FTP","AS2",  "ServiceNow","Linux","Shell",  "Azure","AWS","SOC","NOC","Incident","Monitoring"]Show more lines
+1.2 Locations (India focus)
+PythonLOCATIONS = [  # Primary cities/regions; these strings are used both in URL params and textual matches  "Noida","Delhi NCR","Gurugram","Bengaluru","Hyderabad","Pune","Chennai","India"]Show more lines
+1.3 Recency & pagination (per source)
+Python# How “fresh” we want the jobs (in days)RECENCY_DAYS = [1, 3, 7]           # used to generate scenario URLs (e.g., Indeed fromage)# Page limits per query (keep modest; raise gradually)MAX_PAGES_NAUKRI  = 3               # pageNo=1..NMAX_PAGES_INDEED  = 3               # start=0,10,20...MAX_PAGES_HIRIST  = 3               # page=1..NShow more lines
+1.4 ATS JSON (optional, public & safe)
+Python# Populate only after you verify a company’s ATS shortname/slug is publicly availableGREENHOUSE_COMPANIES = []           # e.g., ["crowdstrike", "paloaltonetworks"]LEVER_COMPANIES      = []           # e.g., ["zscaler", "skyhighsecurity"]Show more lines
+
+2) URL Planner (prebuild all scenarios before fetching)
+Why: To avoid “loss” and ensure coverage, we generate a deterministic list of URLs across (keyword × location × recency × page) for each source. The fetchers simply iterate this list and extract results.
+2.1 Naukri URL pattern (public)
+https://www.naukri.com/<slug>-jobs?k=<keyword>&l=<location>&sort=date&pageNo=<page>
+
+
+<slug>: keyword with spaces → hyphens.
+sort=date: newest first.
+Pagination: pageNo=1..MAX_PAGES_NAUKRI.
+
+2.2 Indeed India URL pattern (public)
+https://in.indeed.com/jobs?q=<keyword>&l=<location>&fromage=<days>&sort=date&start=<offset>
+
+
+fromage=<days>: jobs posted within X days (1, 3, 7).
+sort=date: newest first.
+Pagination via start=<offset> (0, 10, 20 … often 10 per page; some regions 15).
+
+
+Remote/hybrid note: Indeed’s explicit remote filter parameters vary and are not always honored anonymously. We still detect work mode by scanning job card text for “Remote/Hybrid/WFH”.
+
+2.3 Hirist URL pattern (public)
+https://www.hirist.com/search/?query=<keyword>&location=<location>&page=<page>
+
+
+Many Hirist pages expose query by query & location.
+Some sites also support remote=1. Since this can vary, we prefer detecting remote/hybrid from text rather than relying on a parameter.
+Pagination: page=1..MAX_PAGES_HIRIST.
+
+
+Important: Exact parameter names may evolve. This planner uses common, widely seen patterns. If a parameter stops working, the agent should keep the query minimal (query+location) and rely on content scanning. This keeps dependencies low and resilience high.
+
+
+3) Connectors (Extraction logic per source)
+All connectors:
+
+Use a shared requests.Session with a desktop user agent.
+Timeout = 20s.
+Random delay (1.5–2.5s) between page requests.
+Never require login.
+
+3.1 Naukri (HTML, public)
+Selectors (as observed commonly):
+
+Card: div.jobTuple
+Title: a.title
+Company: a.companyName or span.company
+Location: span.place
+Posted: span.jobTuple-job-posted (parse “X days ago”, “today”)
+Link: from a.title[href]
+
+3.2 Indeed India (HTML, public)
+Selectors (modern Indeed SERP):
+
+Card: div.job_seen_beacon (common) or a.tapItem (fallback anchor for job card)
+Title: inside h2.jobTitle or anchor text
+Company: span.companyName
+Location: div.companyLocation
+Posted: span.date or text containing “Just posted”, “Today”, “X days ago”
+Link: a.tapItem[href] (relative; prepend https://in.indeed.com)
+
+
+Indeed markup changes more often; we implement fallback selectors and text heuristics to reduce fragility.
+
+3.3 Hirist (HTML, public)
+Selectors (typical tech job boards):
+
+Card: .job-card or .job (we’ll try both)
+Title: a.job-title or h3 inside the card
+Company: .company or .company-name
+Location: .location
+Posted: .posted-date or .posted (parse similar to Naukri)
+Link: title anchor href
+
+
+If no selectors match, we scan anchors within the results container for typical job link patterns and extract text heuristically.
+
+3.4 ATS JSON (optional; public)
+
+Greenhouse: GET https://boards-api.greenhouse.io/v1/boards/<shortname>/jobs
+
+Fields: title, absolute_url, location.name, updated_at[:10]
+
+
+Lever: GET https://api.lever.co/v0/postings/<company>?mode=json
+
+Fields: text, hostedUrl, categories.location, createdAt (ms epoch → date)
+
+
+
+
+4) Deduplication (Clear logic)
+We deduplicate across all sources to avoid duplicates in your final CSV/JSON.
+4.1 Canonical key (strict)
+key = sha1( lower(company) + '|' +
+            lower(title)   + '|' +
+            lower(location or '') + '|' +
+            absolute_link ).hex[:16]
+
+
+This collapses exact same job across sources (same title/company/location + same URL or canonicalized version).
+We prefer absolute link (e.g., Indeed link normalized with full domain).
+
+4.2 Fuzzy guard (optional, advanced)
+For the basic version, we do not do fuzzy dedup. If you later want to merge near‑duplicates (e.g., DLP Engineer vs DLP/CASB Engineer), you can add:
+
+Title normalization (remove slashes, punctuation).
+Jaro‑Winkler / Levenshtein (requires extra dependency).
+Company normalization (strip India Pvt Ltd, etc.).
+
+Decision: Keep strict key now (no extra deps, deterministic), expand later if needed.
+
+5) Relevance Scoring (basic)
+
+Start at 0.0; clamp to 1.5.
+Recency (based on parsed date):
+
+≤ 1 day: +1.0
+≤ 7 days: +0.7
+≤ 30 days: +0.4
+
+
+Keyword matches: +0.1 × count(KEYWORDS seen in title/location)
+
+
+(Optional later) Work mode bonus if text contains Remote/Hybrid/WFH: +0.2.
+
+
+6) Output Schema (consistent across sources)
+6.1 JSON object
+JSON{  "job_id": "string",  "source": "naukri|indeed|hirist|greenhouse|lever",  "title": "string",  "company": "string",  "location": "string|null",  "work_mode": "remote|hybrid|onsite|null",  "posted_date": "YYYY-MM-DD|null",  "salary": "string|null",  "experience": "string|null",  "skills": "string|null",  "job_type": "string|null",  "keywords_matched": ["..."],  "score": 0.0,  "link": "https://..."}``Show more lines
+6.2 CSV columns (fixed order)
+job_id,source,job_title,company,location,work_mode,posted_date,
+salary,experience,skills,job_type,keywords_matched,score,job_link
+
+
+7) Orchestration (execution order)
+
+Generate URL list for Naukri, Indeed, Hirist:
+
+Each combination: (keyword × location × recency × page)
+
+
+Iterate URLs source‑by‑source:
+
+Naukri (HTML)
+Indeed (HTML)
+Hirist (HTML)
+
+
+Optionally fetch ATS JSON if configured.
+Normalize → Dedup → Score.
+Write outputs (JSON + CSV) once at the end.
+
+
+Politeness: Sleep 1.5–2.5s between page fetches; stop early when a page returns no cards.
+
+
+8) Fully Commented Python (ready to run)
+
+Save as jobs_public_pipeline.py
+Install deps: pip install requests beautifulsoup4
+Run: python jobs_public_pipeline.py
+
+Python# jobs_public_pipeline.py# Public-only job sourcing: Naukri + Indeed + Hirist (+ optional ATS JSON)# Minimal dependencies, no login. Owner: Alok Gargimport re, csv, json, time, random, hashlib, loggingfrom datetime import datetime, timedeltafrom typing import List, Dictfrom urllib.parse import urlencode, urljoinimport requestsfrom bs4 import BeautifulSoup# ----------------- CONFIG -----------------KEYWORDS = [    "L1 monitoring","DLP","CASB",    "GoAnywhere","MFT","FMS","FTG",    "SFTP","FTPS","FTP","AS2",    "ServiceNow","Linux","Shell",    "Azure","AWS","SOC","NOC","Incident","Monitoring"]LOCATIONS = ["Noida","Delhi NCR","Gurugram","Bengaluru","Hyderabad","Pune","Chennai","India"]RECENCY_DAYS = [1, 3, 7]MAX_PAGES_NAUKRI = 3MAX_PAGES_INDEED = 3MAX_PAGES_HIRIST = 3REQUEST_DELAY_RANGE = (1.5, 2.5)TIMEOUT = 20GREENHOUSE_COMPANIES = []   # e.g., ["crowdstrike"]LEVER_COMPANIES      = []   # e.g., ["zscaler"]JSON_OUT = "jobs.json"CSV_OUT = "jobs.csv"# ----------------- LOGGING -----------------logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")# ----------------- SESSION -----------------def make_session():    s = requests.Session()    s.headers.update({        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "                      "(KHTML, like Gecko) Chrome/120.0 Safari/537.36"    })    return sSESSION = make_session()def sleep_a_bit():    time.sleep(random.uniform(*REQUEST_DELAY_RANGE))# ----------------- UTILS -----------------def norm(s: str) -> str:    return re.sub(r"\s+", " ", (s or "").strip())def key_norm(s: str) -> str:    return norm(s).lower()def job_uid(company: str, title: str, location: str, link: str) -> str:    # Strict dedup key across sources    key = f"{key_norm(company)}|{key_norm(title)}|{key_norm(location or '')}|{link}"    return hashlib.sha1(key.encode("utf-8")).hexdigest()[:16]def parse_relative_date(text: str):    """Convert '2 days ago'/'Just posted'/'Today' -> ISO date (UTC)."""    if not text:        return None    t = text.lower()    now = datetime.utcnow()    if "today" in t or "just posted" in t:        return now.date().isoformat()    m = re.search(r"(\d+)\s+(hour|hours|day|days|week|weeks|month|months)", t)    if not m:        return None    n = int(m.group(1)); unit = m.group(2)    if "hour" in unit: dt = now - timedelta(hours=n)    elif "day"  in unit: dt = now - timedelta(days=n)    elif "week" in unit: dt = now - timedelta(weeks=n)    else: dt = now - timedelta(days=30*n)    return dt.date().isoformat()def infer_work_mode(text: str):    """Infer Remote/Hybrid/Onsite from card text."""    t = (text or "").lower()    if any(w in t for w in ["remote", "work from home", "wfh", "work-from-home"]):        return "remote"    if "hybrid" in t or "flexible" in t:        return "hybrid"    return Nonedef matched_keywords(title: str, location: str):    t = f"{title} {location or ''}".lower()    return [kw for kw in KEYWORDS if kw.lower() in t]# ----------------- URL PLANNER -----------------def plan_naukri_urls() -> List[str]:    urls = []    for kw in KEYWORDS:        slug = kw.replace(" ", "-")        base = f"https://www.naukri.com/{slug}-jobs"        for loc in LOCATIONS:            for page in range(1, MAX_PAGES_NAUKRI + 1):                params = {"k": kw, "l": loc, "sort": "date", "pageNo": str(page)}                urls.append(f"{base}?{urlencode(params)}")    return urlsdef plan_indeed_urls() -> List[str]:    urls = []    base = "https://in.indeed.com/jobs"    for kw in KEYWORDS:        for loc in LOCATIONS:            for d in RECENCY_DAYS:                for p in range(MAX_PAGES_INDEED):                    start = p * 10  # common pagination step                    params = {"q": kw, "l": loc, "fromage": str(d), "sort": "date", "start": str(start)}                    urls.append(f"{base}?{urlencode(params)}")    return urlsdef plan_hirist_urls() -> List[str]:    urls = []    base = "https://www.hirist.com/search/"    for kw in KEYWORDS:        for loc in LOCATIONS:            for page in range(1, MAX_PAGES_HIRIST + 1):                params = {"query": kw, "location": loc, "page": str(page)}                urls.append(f"{base}?{urlencode(params)}")    return urls# ----------------- NAUKRI CONNECTOR -----------------def fetch_naukri(url: str) -> List[Dict]:    jobs = []    try:        resp = SESSION.get(url, timeout=TIMEOUT)        if resp.status_code != 200:            logging.warning("Naukri non-200: %s -> %s", resp.status_code, url)            return jobs        soup = BeautifulSoup(resp.text, "html.parser")        cards = soup.select("div.jobTuple")        if not cards:            return jobs        for c in cards:            title_el = c.select_one("a.title")            comp_el  = c.select_one("a.companyName") or c.select_one("span.company")            loc_el   = c.select_one("span.place")            post_el  = c.select_one("span.jobTuple-job-posted")            title = title_el.get_text(strip=True) if title_el else None            company = comp_el.get_text(strip=True) if comp_el else None            location = loc_el.get_text(strip=True) if loc_el else None            posted_date = parse_relative_date(post_el.get_text(strip=True) if post_el else "")            link = title_el["href"] if (title_el and title_el.has_attr("href")) else None            if not (title and company and link):                continue            wm = infer_work_mode(c.get_text(" ", strip=True))            jobs.append({                "source": "naukri",                "title": title,                "company": company,                "location": location,                "work_mode": wm,                "posted_date": posted_date,                "salary": None,                "experience": None,                "skills": None,                "job_type": None,                "keywords_matched": matched_keywords(title, location),                "link": link            })    except requests.RequestException as e:        logging.error("Naukri error: %s -> %s", url, e)    return jobs# ----------------- INDEED CONNECTOR -----------------def fetch_indeed(url: str) -> List[Dict]:    jobs = []    try:        resp = SESSION.get(url, timeout=TIMEOUT)        if resp.status_code != 200:            logging.warning("Indeed non-200: %s -> %s", resp.status_code, url)            return jobs        soup = BeautifulSoup(resp.text, "html.parser")        # Prefer modern card containers; fallback to anchors        cards = soup.select("div.job_seen_beacon")        anchors = soup.select("a.tapItem")        if not cards and anchors:            # Build pseudo-cards from anchors            for a in anchors:                title = a.get_text(" ", strip=True)                title = title.split("\n")[0].strip()  # trim noise                # company/location usually nearby; try to find sibling spans                company = None; location = None; posted_date = None                comp_span = a.select_one("span.companyName")                loc_div   = a.select_one("div.companyLocation")                date_span = a.select_one("span.date")                company = comp_span.get_text(strip=True) if comp_span else company                location = loc_div.get_text(strip=True) if loc_div else location                posted_date = parse_relative_date(date_span.get_text(strip=True) if date_span else "")                href = a.get("href", "")                link = urljoin("https://in.indeed.com", href) if href else None                if not (title and link):                    continue                wm = infer_work_mode(a.get_text(" ", strip=True))                jobs.append({                    "source": "indeed",                    "title": title,                    "company": company or "",                    "location": location,                    "work_mode": wm,                    "posted_date": posted_date,                    "salary": None,                    "experience": None,                    "skills": None,                    "job_type": None,                    "keywords_matched": matched_keywords(title, location or ""),                    "link": link                })        else:            for c in cards:                title_el = c.select_one("h2.jobTitle")                # Title anchor often inside h2                a = title_el.select_one("a") if title_el else None                title = a.get_text(strip=True) if a else (title_el.get_text(strip=True) if title_el else None)                href = a.get("href") if a and a.has_attr("href") else None                link = urljoin("https://in.indeed.com", href) if href else None                comp_el = c.select_one("span.companyName")                loc_el  = c.select_one("div.companyLocation")                date_el = c.select_one("span.date")                company = comp_el.get_text(strip=True) if comp_el else ""                location = loc_el.get_text(strip=True) if loc_el else None                posted_date = parse_relative_date(date_el.get_text(strip=True) if date_el else "")                if not (title and link):                    continue                wm = infer_work_mode(c.get_text(" ", strip=True))                jobs.append({                    "source": "indeed",                    "title": title,                    "company": company,                    "location": location,                    "work_mode": wm,                    "posted_date": posted_date,                    "salary": None,                    "experience": None,                    "skills": None,                    "job_type": None,                    "keywords_matched": matched_keywords(title, location or ""),                    "link": link                })    except requests.RequestException as e:        logging.error("Indeed error: %s -> %s", url, e)    return jobs# ----------------- HIRIST CONNECTOR -----------------def fetch_hirist(url: str) -> List[Dict]:    jobs = []    try:        resp = SESSION.get(url, timeout=TIMEOUT)        if resp.status_code != 200:            logging.warning("Hirist non-200: %s -> %s", resp.status_code, url)            return jobs        soup = BeautifulSoup(resp.text, "html.parser")        # Try common card classes first        cards = soup.select(".job-card")        if not cards:            cards = soup.select(".job")        # Fallback: try anchors within a results container        if not cards:            container = soup.select_one("#results") or soup.select_one(".results")            if container:                for a in container.select("a"):                    title = a.get_text(" ", strip=True)                    if title and len(title) > 5:                        href = a.get("href")                        if href and "/job/" in href:  # heuristic for job path                            link = urljoin("https://www.hirist.com", href)                            wm = infer_work_mode(a.get_text(" ", strip=True))                            jobs.append({                                "source": "hirist",                                "title": title,                                "company": "",                                "location": None,                                "work_mode": wm,                                "posted_date": None,                                "salary": None,                                "experience": None,                                "skills": None,                                "job_type": None,                                "keywords_matched": matched_keywords(title, ""),                                "link": link                            })                return jobs  # done with fallback        # Normal card extraction        for c in cards:            title_el = c.select_one("a.job-title") or c.select_one("h3")            comp_el  = c.select_one(".company, .company-name")            loc_el   = c.select_one(".location")            date_el  = c.select_one(".posted-date, .posted")            title = title_el.get_text(strip=True) if title_el else None            company = comp_el.get_text(strip=True) if comp_el else ""            location = loc_el.get_text(strip=True) if loc_el else None            posted_date = parse_relative_date(date_el.get_text(strip=True) if date_el else "")            href_el = c.select_one("a.job-title") or c.select_one("a")            href = href_el.get("href") if (href_el and href_el.has_attr("href")) else None            link = urljoin("https://www.hirist.com", href) if href else None            if not (title and link):                continue            wm = infer_work_mode(c.get_text(" ", strip=True))            jobs.append({                "source": "hirist",                "title": title,                "company": company,                "location": location,                "work_mode": wm,                "posted_date": posted_date,                "salary": None,                "experience": None,                "skills": None,                "job_type": None,                "keywords_matched": matched_keywords(title, location or ""),                "link": link            })    except requests.RequestException as e:        logging.error("Hirist error: %s -> %s", url, e)    return jobs# ----------------- ATS JSON (OPTIONAL) -----------------def greenhouse_fetch(company_shortname: str) -> List[Dict]:    url = f"https://boards-api.greenhouse.io/v1/boards/{company_shortname}/jobs"    jobs = []    try:        resp = SESSION.get(url, timeout=TIMEOUT)        if resp.status_code != 200:            logging.warning("Greenhouse non-200 for %s: %s", company_shortname, resp.status_code)            return jobs        data = resp.json()        for j in data.get("jobs", []):            title = j.get("title")            loc   = (j.get("location") or {}).get("name")            link  = j.get("absolute_url")            posted = (j.get("updated_at") or "")[:10] or None            if not (title and link):                continue            jobs.append({                "source": "greenhouse",                "title": title,                "company": company_shortname,                "location": loc,                "work_mode": None,                "posted_date": posted,                "salary": None,                "experience": None,                "skills": None,                "job_type": None,                "keywords_matched": matched_keywords(title, loc or ""),                "link": link            })    except Exception as e:        logging.error("Greenhouse error for %s: %s", company_shortname, e)    return jobsdef lever_fetch(company_slug: str) -> List[Dict]:    url = f"https://api.lever.co/v0/postings/{company_slug}?mode=json"    jobs = []    try:        resp = SESSION.get(url, timeout=TIMEOUT)        if resp.status_code != 200:            logging.warning("Lever non-200 for %s: %s", company_slug, resp.status_code)            return jobs        data = resp.json()        for j in data:            title = j.get("text")            loc   = (j.get("categories") or {}).get("location")            link  = j.get("hostedUrl")            created = j.get("createdAt")            posted = None            if created:                try:                    posted = datetime.utcfromtimestamp(created/1000).date().isoformat()                except Exception:                    posted = None            if not (title and link):                continue            jobs.append({                "source": "lever",                "title": title,                "company": company_slug,                "location": loc,                "work_mode": None,                "posted_date": posted,                "salary": None,                "experience": None,                "skills": None,                "job_type": None,                "keywords_matched": matched_keywords(title, loc or ""),                "link": link            })    except Exception as e:        logging.error("Lever error for %s: %s", company_slug, e)    return jobs# ----------------- DEDUP / SCORE / SAVE -----------------def dedup_jobs(items: List[Dict]) -> List[Dict]:    """Strict dedup based on company+title+location+link."""    seen = set(); out = []    for j in items:        uid = job_uid(j.get("company",""), j.get("title",""), j.get("location",""), j.get("link",""))        if uid in seen:            continue        seen.add(uid)        j["job_id"] = uid        out.append(j)    return outdef score_job(j: Dict) -> float:    """Basic relevance score: recency + keyword match (cap at 1.5)."""    score = 0.0    if j.get("posted_date"):        try:            d = datetime.fromisoformat(j["posted_date"])            days = (datetime.utcnow().date() - d.date()).days            if days <= 1: score += 1.0            elif days <= 7: score += 0.7            elif days <= 30: score += 0.4        except Exception:            pass    score += 0.1 * len(j.get("keywords_matched", []))    return round(min(score, 1.5), 2)def save_outputs(items: List[Dict], json_path=JSON_OUT, csv_path=CSV_OUT):    # JSON    with open(json_path, "w", encoding="utf-8") as f:        json.dump(items, f, ensure_ascii=False, indent=2)    # CSV    cols = ["job_id","source","job_title","company","location","work_mode",            "posted_date","salary","experience","skills","job_type",            "keywords_matched","score","job_link"]    with open(csv_path, "w", newline="", encoding="utf-8") as f:        w = csv.DictWriter(f, fieldnames=cols)        w.writeheader()        for j in items:            row = {                "job_id": j.get("job_id"),                "source": j.get("source"),                "job_title": j.get("title"),                "company": j.get("company"),                "location": j.get("location"),                "work_mode": j.get("work_mode"),                "posted_date": j.get("posted_date"),                "salary": j.get("salary"),                "experience": j.get("experience"),                "skills": j.get("skills"),                "job_type": j.get("job_type"),                "keywords_matched": ";".join(j.get("keywords_matched", [])),                "score": score_job(j),                "job_link": j.get("link"),            }            w.writerow(row)# ----------------- MAIN (ORCHESTRATOR) -----------------def main():    all_jobs = []    # 1) Plan URLs    naukri_urls = plan_naukri_urls()    indeed_urls = plan_indeed_urls()    hirist_urls = plan_hirist_urls()    logging.info("Planned URLs: Naukri=%d, Indeed=%d, Hirist=%d",                 len(naukri_urls), len(indeed_urls), len(hirist_urls))    # 2) Fetch Naukri    for url in naukri_urls:        all_jobs.extend(fetch_naukri(url))        sleep_a_bit()    # 3) Fetch Indeed    for url in indeed_urls:        all_jobs.extend(fetch_indeed(url))        sleep_a_bit()    # 4) Fetch Hirist    for url in hirist_urls:        all_jobs.extend(fetch_hirist(url))        sleep_a_bit()    # 5) Optional ATS JSON (safe, public)    for gh in GREENHOUSE_COMPANIES:        all_jobs.extend(greenhouse_fetch(gh))    for lv in LEVER_COMPANIES:        all_jobs.extend(lever_fetch(lv))    # 6) Dedup & score    uniq = dedup_jobs(all_jobs)    for j in uniq:        j["score"] = score_job(j)    # Sort: score desc, then posted_date desc (lexical ok)    uniq.sort(key=lambda x: (-x["score"], x.get("posted_date") or ""))    # 7) Save outputs (single write)    save_outputs(uniq)    logging.info("Saved %d unique jobs to %s and %s", len(uniq), JSON_OUT, CSV_OUT)if __name__ == "__main__":    main()Show more lines
+
+9) Testing & Acceptance
+
+URL planning: Script prints planned counts for each source; verify numbers are > 0.
+Naukri extraction: Records present; titles/companies populated.
+Indeed extraction: Records present using either div.job_seen_beacon or a.tapItem fallback.
+Hirist extraction: Records present via normal or fallback heuristic.
+Dedup: Same job (same title/company/location + link) appears only once in outputs.
+Scoring: Recent jobs have higher score; keyword matches increase score.
+Outputs: jobs.json & jobs.csv exist; CSV columns match spec.
+Politeness: Notice ~2s delays between page requests, avoiding bursts.
+
+
+10) Notes & Best Practices
+
+No login, no scraping of gated content: Everything is public SERP HTML or public ATS JSON.
+Selectors evolve: If a source changes HTML, the fallback heuristics still try to extract. Update selectors as needed.
+Pagination step: Indeed commonly uses start=0,10,20…; if you see fewer results per page, adjust increment to 15.
+Remote/hybrid detection: We rely on text scanning (robust, public‑only) rather than source‑specific flags.
+Expand gradually: Increase page limits or keyword sets in small steps to avoid throttling.
+
+
+11) Next Enhancements (still minimal deps)
+
+Add Foundit/Monster connector (similar card scraping).
+Join company metadata (remote policy, compensation proxy) from a simple companies.xlsx to enrich output.
+Add caching (seen_ids.json) to skip already seen jobs across runs.
+Add config file (config.yaml) and CLI flags for --pages, --locations, --keywords-file.
+-----------------------------------------------------------------------------------------
+Awesome question, Alok. Here’s a **blunt, industry‑style review** of the basic version you asked me to design—what will break first, why, and how to fix it without killing your “public‑only, minimal‑dependency” goal.
+
+***
+
+## 🔎 Executive Summary
+
+The basic blueprint is a solid MVP: **public sources only**, **low deps**, **single consolidated output**.  
+However, as a reviewer I see **10 key drawbacks** that will bite you in real‑world runs:
+
+1.  **URL explosion** (planner builds too many combinations; low signal:noise).
+2.  **Fragile selectors** (Indeed/Hirist HTML changes often; few fallbacks).
+3.  **Weak error/backoff policy** (no 429/Retry‑After handling; captchas = run dies silently).
+4.  **No robots/ToS guardrails** (risk of unintentional policy breach).
+5.  **Dedup is only “strict”** (diff links for same job will slip through).
+6.  **No cross‑run persistence** (emits the same jobs every run; no incrementalism).
+7.  **No coverage/quality telemetry** (you can’t tell what worked and what failed).
+8.  **Remote/hybrid detection is naive** (keyword scan → false positives/negatives).
+9.  **Scoring is simplistic** (recency + keyword count; no employer weighting).
+10. **Config/ops ergonomics** (hard‑coded config; no CLI; no quick toggles).
+
+Below I drill into each area, give **severity**, **impact**, and **concrete fixes** (still minimal deps). I also include **drop‑in code snippets** you can paste into your current script.
+
+***
+
+## 1) URL Planner & Coverage
+
+**Issue: Combinatorial URL explosion**
+
+*   `keyword × location × recency × pages` grows fast; many URLs return near‑duplicates or empty pages.
+
+**Impact:** Wasted requests → higher block risk, slower runs, more duplicates.
+
+**Fix (minimal deps):**
+
+*   **Adaptive paging** per query: stop after **2 empty/low-yield pages** in a row.
+*   **De‑duplicate planned URLs** before fetch.
+*   **Prioritize** high‑yield queries first (e.g., security terms; India + Tier‑1 cities).
+*   **Throttle recency**: use `[3, 7]` instead of `[1,3,7]` until needed.
+
+**Snippet (adaptive stop):**
+
+```python
+def run_query_with_adaptive_paging(plan_urls, fetch_fn, max_empty=2):
+    all_rows = []; empty_streak = 0
+    for url in plan_urls:
+        rows = fetch_fn(url)
+        if not rows:
+            empty_streak += 1
+            if empty_streak >= max_empty:
+                break
+        else:
+            empty_streak = 0
+            all_rows.extend(rows)
+        sleep_a_bit()
+    return all_rows
+```
+
+***
+
+## 2) Selectors Fragility (Indeed & Hirist)
+
+**Issue: Markup changes often; we only have one main selector + a light fallback.**
+
+**Impact:** Entire source can go dark without you noticing; silent data loss.
+
+**Fix:**
+
+*   Add **multi‑selector try‑order** per field (title, company, location, date).
+*   Add **content heuristics**: if title missing, extract the `<a>` with the longest text inside the card.
+*   Keep a **selector test** function that logs **“0 cards detected for N pages”** as a WARNING.
+
+**Snippet (fallbacks for Indeed):**
+
+```python
+def first_text(soup, selectors):
+    for css in selectors:
+        el = soup.select_one(css)
+        if el and el.get_text(strip=True):
+            return el.get_text(strip=True)
+    return None
+
+# Example in fetch_indeed(): try multiple selectors
+title = first_text(card, ["h2.jobTitle a", "h2.jobTitle", "a.jcs-JobTitle", "a.tapItem"])
+company = first_text(card, ["span.companyName", ".companyInfo .companyName"])
+location = first_text(card, ["div.companyLocation", "div.companyLocation > span"])
+```
+
+***
+
+## 3) Rate‑limits, 429 & Captcha
+
+**Issue:** No special handling for **HTTP 429 (Too Many Requests)**, **403**, or **Retry‑After** header.
+
+**Impact:** You get throttled → partial results → opaque failures.
+
+**Fix:**
+
+*   On **429**: parse `Retry‑After` (seconds), sleep that long + jitter, retry once.
+*   On **403/CAPTCHA**: back off longer and **skip that source** for the rest of the run.
+*   Add **Accept / Accept‑Language** headers to look more like a real browser.
+
+**Snippet (basic retry):**
+
+```python
+def get_with_backoff(url, session, timeout=20, max_retries=2):
+    for attempt in range(max_retries+1):
+        r = session.get(url, timeout=timeout)
+        if r.status_code == 429:
+            ra = int(r.headers.get("Retry-After", "5"))
+            time.sleep(ra + random.uniform(1,3))
+            continue
+        if r.status_code in (200, 404):
+            return r
+        if r.status_code == 403:
+            logging.warning("403 for %s; backing off", url)
+            time.sleep(10 + random.uniform(1,3))
+            return r
+        time.sleep(2 + attempt)
+    return r
+```
+
+***
+
+## 4) Robots.txt & ToS Awareness
+
+**Issue:** We don’t check **robots.txt**; some paths may be disallowed to bots.
+
+**Impact:** Compliance risk; increased chance of block.
+
+**Fix:**
+
+*   **Manual policy review** for each source.
+*   Programmatic robots parsing (optional) adds a dep; so at least **whitelist** only the known public search URLs and **avoid** crawling detail pages.
+
+**Policy guard (lightweight):**
+
+*   Fetch **list pages only**; **never** hit heavy detail pages in bulk.
+
+***
+
+## 5) Deduplication (Strict Only)
+
+**Issue:** Strict key = `(company|title|location|link)`; the **same job** with different URLs (e.g., tracking params, `http` vs `https`) may bypass dedup.
+
+**Impact:** Duplicate rows inflate counts and noise.
+
+**Fix:**
+
+*   **Link canonicalization** per source:
+    *   Indeed: keep only **`viewjob?jk=<id>`** form (strip params).
+    *   Naukri: extract **job listing ID** from URL if present.
+    *   Hirist: strip query params & fragments.
+
+**Snippet (canonicalizers):**
+
+```python
+from urllib.parse import urlparse, parse_qs, urlunparse
+
+def canon_indeed(link):
+    # normalize to https://in.indeed.com/viewjob?jk=<id>
+    u = urlparse(link)
+    qs = parse_qs(u.query)
+    jk = qs.get("jk", [None])[0]
+    if jk:
+        return f"https://in.indeed.com/viewjob?jk={jk}"
+    return link.split("?")[0]
+
+def canon_generic(link):
+    return link.split("#")[0].split("?")[0]
+
+# use in job_uid:
+link = canon_indeed(link) if "indeed.com" in link else canon_generic(link)
+```
+
+***
+
+## 6) No Cross‑Run State (Incrementalism)
+
+**Issue:** Every run re‑emits all jobs → duplicates for you downstream; no sense of “new since last run”.
+
+**Impact:** Hard to diff and alert; heavier files.
+
+**Fix:**
+
+*   Maintain a **`seen_ids.json`** (set of job\_id) and skip if already seen.
+*   Optionally write **`delta_jobs.csv`** for just the new ones.
+
+**Snippet:**
+
+```python
+import os, json
+
+SEEN_PATH = "seen_ids.json"
+
+def load_seen():
+    if os.path.exists(SEEN_PATH):
+        return set(json.load(open(SEEN_PATH)))
+    return set()
+
+def save_seen(seen):
+    json.dump(list(seen), open(SEEN_PATH, "w"))
+
+# usage:
+seen = load_seen()
+new = []
+for j in uniq:
+    if j["job_id"] not in seen:
+        new.append(j)
+        seen.add(j["job_id"])
+save_seen(seen)
+# write new-only file if you want
+```
+
+***
+
+## 7) Telemetry & Observability
+
+**Issue:** No per‑source stats or URL‑level yields.
+
+**Impact:** You won’t know which keywords/locations are worth keeping.
+
+**Fix:**
+
+*   Log **per‑URL** counts (cards found).
+*   Summaries **per source**: planned URLs, hit % (non‑empty pages), jobs extracted.
+*   Emit a simple **metrics JSON** for the run.
+
+**Snippet:**
+
+```python
+metrics = {"naukri": {"planned":0,"non_empty":0,"jobs":0}, "indeed": {...}, "hirist": {...}}
+# increment during run, write at end:
+json.dump(metrics, open("metrics.json","w"), indent=2)
+```
+
+***
+
+## 8) Remote/Hybrid Detection Heuristic
+
+**Issue:** Single‑word matches → noisy results (“remote branch”, “hybrid cloud” ≠ hybrid work mode).
+
+**Impact:** Misclassified work mode → wrong prioritization.
+
+**Fix (still minimal):**
+
+*   Use **phrase lists** and **negative patterns**.
+*   Require a **context window** around the term (e.g., `Remote` near “work”, “job”, “option”).
+
+**Snippet:**
+
+```python
+REMOTE_PHRASES = [r"\bremote\b", r"work\s*from\s*home", r"\bwfh\b"]
+HYBRID_PHRASES = [r"\bhybrid\b", r"flexible\s*work"]
+
+NEGATIVE = [r"remote\s*branch", r"remote\s*site"]
+
+def infer_work_mode(text):
+    t = (text or "").lower()
+    if any(re.search(p, t) for p in NEGATIVE):
+        return None
+    if any(re.search(p, t) for p in REMOTE_PHRASES):
+        return "remote"
+    if any(re.search(p, t) for p in HYBRID_PHRASES):
+        return "hybrid"
+    return None
+```
+
+***
+
+## 9) Scoring Is Too Simple
+
+**Issue:** Just recency + keyword count; doesn’t reflect your *company* priorities.
+
+**Impact:** Mediocre ranking.
+
+**Fix:**
+
+*   Add **source weight** (ATS JSON > Naukri/Indeed SERP).
+*   Add **company weight** from your curated list (product/security leaders get a bump).
+
+**Snippet:**
+
+```python
+SOURCE_WEIGHT = {"greenhouse":0.2, "lever":0.2, "naukri":0.0, "indeed":0.0, "hirist":0.1}
+PREFERRED_COMPANIES = {"zscaler":0.3,"crowdstrike":0.3,"palo alto":0.3,"servicenow":0.2}
+
+def score_job(j):
+    base = recency_component(j) + 0.1 * len(j.get("keywords_matched", []))
+    base += SOURCE_WEIGHT.get(j["source"], 0.0)
+    if j.get("company"):
+        for k, w in PREFERRED_COMPANIES.items():
+            if k in j["company"].lower():
+                base += w; break
+    return round(min(base, 2.0), 2)
+```
+
+***
+
+## 10) Config & Ops Ergonomics
+
+**Issue:** Hard‑coded lists → changing keywords/locations means editing code.
+
+**Impact:** Slows iteration.
+
+**Fix:**
+
+*   Load **`config.json`** (stdlib only).
+*   Add simple **CLI flags** via `argparse`.
+
+**Snippet (config):**
+
+```python
+import json
+CONFIG = json.load(open("config.json"))
+KEYWORDS = CONFIG["keywords"]
+LOCATIONS = CONFIG["locations"]
+```
+
+***
+
+## 11) Minor—but Worth Fixing
+
+*   **Headers**: Add `Accept`, `Accept-Language`, `Referer` to reduce bot suspicion.
+*   **Encoding**: Ensure `encoding='utf-8'` everywhere; some sites respond with cp1252 artifacts.
+*   **CSV injection**: Prefix values that start with `= + - @` to avoid Excel formula injection.
+    ```python
+    def safe_csv(s): 
+        s = s or ""
+        return "'" + s if s and s[0] in "=+-@" else s
+    ```
+*   **Provenance**: Write `run_id`, `run_ts`, and `script_version` into a small `run.json` for auditability.
+
+***
+
+## What Will Break First (Priority Fix Order)
+
+1.  **Indeed/Hirist selectors** → add fallbacks + tests.
+2.  **429/403 handling** → add backoff and headers.
+3.  **URL explosion** → adaptive paging + prune recency levels.
+4.  **Dedup leakage** → canonicalize links (Indeed/Naukri).
+5.  **Cross‑run duplication** → add `seen_ids.json`.
+6.  **Remote/hybrid noise** → phrase‑based detection with negatives.
+7.  **Telemetry** → per‑source metrics & per‑URL yields.
+8.  **Config** → move lists to `config.json`.
+
+All of these keep dependencies at **requests + bs4 + stdlib**.
+
+***
+
+## “No‑Login, No‑Loss” Checklist for Basic Version
+
+*   [ ] **Robots/ToS** reviewed; list pages only.
+*   [ ] **URL planner** pruned + adaptive stop.
+*   [ ] **Per‑source selectors** with 2–3 fallbacks each.
+*   [ ] **429/403 backoff** + headers set.
+*   [ ] **Canonicalize links** before computing `job_id`.
+*   [ ] **seen\_ids.json** to prevent cross‑run dupes.
+*   [ ] **Remote/hybrid** phrase detection with negatives.
+*   [ ] **Metrics**: planned URLs, non‑empty pages, jobs extracted per source.
+*   [ ] **Config.json** for keywords/locations/pages.
+*   [ ] **Single write** for `jobs.json` & `jobs.csv` + run metadata.
+
+***
+
+### Want me to ship a patched script with these improvements (still minimal deps)?
+
+I can generate **`jobs_public_pipeline_v2.py`** with:
+
+*   Backoff & headers,
+*   URL canonicalization,
+*   Adaptive paging,
+*   Fallback selectors,
+*   `seen_ids.json`,
+*   `config.json` support, and
+*   Metrics output.
+
+
+--------------------------------------------------------------------------
+
+
+Absolutely. Below is a clean, industry‑grade, no‑login, minimal‑dependency solution your LLM agent (or any engineer) can follow step‑by‑step to build and run a robust public job sourcing pipeline.
+You’ll get:
+
+A ready‑to‑run script jobs_public_pipeline_v2.py (fully commented)
+Backoff & headers, URL canonicalization, adaptive paging, fallback selectors
+seen_ids.json (incrementalism), config.json support, metrics output
+A precise build & run guide, acceptance tests, and troubleshooting
+
+
+Dependencies (only): requests, beautifulsoup4 (BS4). Everything else is in Python standard library.
+
+
+1) Project Overview
+Goal: Fetch relevant jobs aligned with your resume (e.g., L1 monitoring, DLP/CASB, MFT, ServiceNow, Linux/Azure/AWS), prioritizing remote/hybrid roles from public sources (no login), and produce one consolidated output (jobs.json + jobs.csv) safely and reliably.
+Public Sources:
+
+Naukri (search result pages, HTML)
+Indeed (India) (search result pages, HTML)
+Hirist (search result pages, HTML)
+Optional ATS JSON: Greenhouse / Lever for companies you manually confirm
+
+Key Features (v2):
+
+Prebuild all scenario URLs (keyword × location × recency × page)
+Adaptive paging (stop low‑yield quickly)
+Backoff for 429/403 with Retry‑After handling
+Fallback selectors (resilient to minor HTML changes)
+URL canonicalization (robust dedup)
+Cross‑run state via seen_ids.json (only new jobs each run if you want)
+config.json customizable; metrics.json for observability
+
+
+2) Directory Structure
+job-pipeline/
+  ├─ config.json                # optional (keywords, locations, pages, weights, etc.)
+  ├─ jobs_public_pipeline_v2.py # main script (below)
+  ├─ jobs.json                  # output (created on run)
+  ├─ jobs.csv                   # output (created on run)
+  ├─ seen_ids.json             # cross-run state (created on run)
+  └─ metrics.json              # run metrics (created on run)
+
+
+3) config.json (Optional) — Schema & Example
+
+If config.json is absent, the script uses sane defaults.
+
+Schema:
+JSON{  "keywords": ["..."],  "locations": ["..."],  "recency_days": [1, 3, 7],  "max_pages": { "naukri": 3, "indeed": 3, "hirist": 3 },  "request_delay_range": [1.5, 2.5],  "timeout": 20,  "preferred_companies": { "zscaler": 0.3, "crowdstrike": 0.3 },  "source_weight": { "greenhouse": 0.2, "lever": 0.2, "naukri": 0.0, "indeed": 0.0, "hirist": 0.1 },  "greenhouse_companies": [],  "lever_companies": [],  "adaptive_max_empty_pages": 2}Show more lines
+Example (India focus):
+JSON{  "keywords": [    "L1 monitoring","DLP","CASB",    "GoAnywhere","MFT","FMS","FTG",    "ServiceNow","Linux","Azure","AWS","SOC","NOC"  ],  "locations": ["Noida","Delhi NCR","Gurugram","Bengaluru","Hyderabad","Pune","Chennai","India"],  "recency_days": [3, 7],  "max_pages": { "naukri": 3, "indeed": 3, "hirist": 3 },  "request_delay_range": [1.5, 2.5],  "timeout": 20,  "preferred_companies": { "zscaler": 0.3, "crowdstrike": 0.3, "palo alto": 0.3, "servicenow": 0.2 },  "source_weight": { "greenhouse": 0.2, "lever": 0.2, "naukri": 0.0, "indeed": 0.0, "hirist": 0.1 },  "greenhouse_companies": [],  "lever_companies": [],  "adaptive_max_empty_pages": 2}Show more lines
+
+4) How It Works (Flow)
+
+Load config (or defaults)
+Plan URLs for Naukri, Indeed, Hirist (all scenarios)
+Fetch pages with backoff & headers
+Extract job cards using resilient selectors
+Normalize to a common schema
+Canonicalize links then dedup
+Score jobs (recency + keyword + optional source & company weights)
+Update seen_ids.json if incremental mode
+Write jobs.json, jobs.csv, and metrics.json
+
+
+5) Run Instructions
+Shell# 1) Create virtual env (optional)python -m venv .venvsource .venv/bin/activate# 2) Install minimal depspip install requests beautifulsoup4# 3) (Optional) Create config.json (see example above)# 4) Runpython jobs_public_pipeline_v2.py --config config.jsonShow more lines
+CLI Flags:
+--config          Path to config.json (optional)
+--json-out        Path to jobs.json (default: jobs.json)
+--csv-out         Path to jobs.csv (default: jobs.csv)
+--metrics-out     Path to metrics.json (default: metrics.json)
+--seen            Path to seen_ids.json (default: seen_ids.json)
+--no-incremental  Do NOT use seen_ids (emit all jobs every run)
+
+
+6) Acceptance Tests (Checklist)
+
+Script runs end‑to‑end with INFO logs; produces jobs.json, jobs.csv, metrics.json
+Per source: planned URLs > 0; non‑empty page count > 0; jobs extracted > 0
+Dedup: the same job (same company/title/location/link) appears once
+Incremental: re‑run yields fewer or zero new jobs if nothing changed (with seen_ids.json)
+Scoring: recent jobs rank higher; preferred companies get weight bump
+Politeness: observes ~1.5–2.5s delays; handles 429/403 gracefully
+
+
+7) The Script — jobs_public_pipeline_v2.py
+
+Paste this file as‑is. It’s fully commented for your agent to follow and modify safely.
+
+Python# jobs_public_pipeline_v2.py# Public-only job sourcing pipeline (Naukri + Indeed + Hirist + optional ATS JSON)# Minimal dependencies: requests, beautifulsoup4# Features:# - Backoff & headers, URL canonicalization# - URL planner & adaptive paging# - Fallback selectors (resilient extraction)# - seen_ids.json (incremental), config.json support# - metrics.json (observability)## Owner: Alok Gargimport os, re, csv, json, time, random, argparse, hashlib, loggingfrom datetime import datetime, timedeltafrom typing import List, Dict, Tuplefrom urllib.parse import urlencode, urljoin, urlparse, parse_qsimport requestsfrom bs4 import BeautifulSoup# ----------------- Logging -----------------logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")# ----------------- Defaults (overridden by config.json if provided) -----------------DEFAULTS = {    "keywords": [        "L1 monitoring","DLP","CASB","GoAnywhere","MFT","FMS","FTG",        "ServiceNow","Linux","Azure","AWS","SOC","NOC","Incident","Monitoring"    ],    "locations": ["Noida","Delhi NCR","Gurugram","Bengaluru","Hyderabad","Pune","Chennai","India"],    "recency_days": [3, 7],    "max_pages": {"naukri": 3, "indeed": 3, "hirist": 3},    "request_delay_range": [1.5, 2.5],    "timeout": 20,    "preferred_companies": {"zscaler": 0.3, "crowdstrike": 0.3, "palo alto": 0.3, "servicenow": 0.2},    "source_weight": {"greenhouse": 0.2, "lever": 0.2, "naukri": 0.0, "indeed": 0.0, "hirist": 0.1},    "greenhouse_companies": [],    "lever_companies": [],    "adaptive_max_empty_pages": 2}# ----------------- Config Loader -----------------def load_config(path: str) -> dict:    cfg = json.load(open(path, "r", encoding="utf-8")) if path and os.path.exists(path) else {}    # merge with defaults    merged = DEFAULTS.copy()    for k, v in cfg.items():        merged[k] = v    return merged# ----------------- HTTP Session with headers & backoff -----------------def make_session():    s = requests.Session()    s.headers.update({        "User-Agent": ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "                       "(KHTML, like Gecko) Chrome/120.0 Safari/537.36"),        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",        "Accept-Language": "en-GB,en;q=0.9",        "Connection": "keep-alive",        "DNT": "1"    })    return sdef get_with_backoff(url: str, session: requests.Session, timeout: int, max_retries: int = 2) -> requests.Response:    """    GET with handling for 429 (Retry-After), 403 backoff, and a few retries.    Returns the last Response object even if non-200.    """    last = None    for attempt in range(max_retries + 1):        try:            r = session.get(url, timeout=timeout)            status = r.status_code            if status == 429:                ra = int(r.headers.get("Retry-After", "5"))                sleep = ra + random.uniform(1, 3)                logging.warning("429 Too Many Requests, sleeping %.1fs (Retry-After=%s)", sleep, ra)                time.sleep(sleep)                last = r                continue            if status == 403:                logging.warning("403 Forbidden for %s; backing off 10s", url)                time.sleep(10 + random.uniform(1, 3))                last = r                break            return r        except requests.RequestException as e:            logging.error("Request error (%s): %s", url, e)            time.sleep(2 + attempt)    return last# ----------------- Helpers & Normalization -----------------def norm_space(s: str) -> str:    return re.sub(r"\s+", " ", (s or "").strip())def lower_norm(s: str) -> str:    return norm_space(s).lower()def parse_relative_date(text: str) -> str:    """    Convert '2 days ago'/'Just posted'/'Today' -> ISO date (UTC).    Returns None if cannot parse.    """    if not text:        return None    t = text.lower()    now = datetime.utcnow()    if "today" in t or "just posted" in t:        return now.date().isoformat()    m = re.search(r"(\d+)\s+(hour|hours|day|days|week|weeks|month|months)", t)    if not m:        return None    n = int(m.group(1)); unit = m.group(2)    if "hour" in unit: dt = now - timedelta(hours=n)    elif "day"  in unit: dt = now - timedelta(days=n)    elif "week" in unit: dt = now - timedelta(weeks=n)    else: dt = now - timedelta(days=30*n)    return dt.date().isoformat()REMOTE_PHRASES = [r"\bremote\b", r"work\s*from\s*home", r"\bwfh\b", r"work[-\s]*from[-\s]*home"]HYBRID_PHRASES = [r"\bhybrid\b", r"flexible\s*work"]NEGATIVE_PHRASES = [r"remote\s*branch", r"remote\s*site"]def infer_work_mode(text: str) -> str:    t = (text or "")    for p in NEGATIVE_PHRASES:        if re.search(p, t, flags=re.I): return None    for p in REMOTE_PHRASES:        if re.search(p, t, flags=re.I): return "remote"    for p in HYBRID_PHRASES:        if re.search(p, t, flags=re.I): return "hybrid"    return Nonedef matched_keywords(title: str, location: str, keywords: List[str]) -> List[str]:    t = f"{title} {location or ''}".lower()    return [kw for kw in keywords if kw.lower() in t]# Canonicalize links per source for robust dedupdef canon_indeed(link: str) -> str:    try:        u = urlparse(link)        qs = parse_qs(u.query)        # Normalize to core viewjob form if possible        jk = qs.get("jk", [None])[0]        if jk:            return f"https://in.indeed.com/viewjob?jk={jk}"        # else strip params/fragments        return link.split("#")[0].split("?")[0]    except Exception:        return linkdef canon_generic(link: str) -> str:    return link.split("#")[0].split("?")[0] if link else linkdef canonical_link(link: str) -> str:    if not link:        return link    if "indeed.com" in link:        return canon_indeed(link)    return canon_generic(link)def job_uid(company: str, title: str, location: str, link: str) -> str:    link_c = canonical_link(link)    key = f"{lower_norm(company)}|{lower_norm(title)}|{lower_norm(location or '')}|{link_c}"    return hashlib.sha1(key.encode("utf-8")).hexdigest()[:16]def safe_csv_value(s: str) -> str:    """    Prevent CSV injection in Excel (values starting with = + - @)    by prefixing with a single quote.    """    if s and len(s) > 0 and s[0] in "=+-@":        return "'" + s    return s# ----------------- URL Planners -----------------def plan_naukri_urls(keywords: List[str], locations: List[str], max_pages: int) -> Dict[Tuple[str, str], List[str]]:    plans = {}    for kw in keywords:        slug = kw.replace(" ", "-")        base = f"https://www.naukri.com/{slug}-jobs"        for loc in locations:            urls = []            for page in range(1, max_pages + 1):                params = {"k": kw, "l": loc, "sort": "date", "pageNo": str(page)}                urls.append(f"{base}?{urlencode(params)}")            plans[(kw, loc)] = urls    return plansdef plan_indeed_urls(keywords: List[str], locations: List[str], recency_days: List[int], max_pages: int) -> Dict[Tuple[str, str, int], List[str]]:    base = "https://in.indeed.com/jobs"    plans = {}    for kw in keywords:        for loc in locations:            for d in recency_days:                urls = []                for p in range(max_pages):                    start = p * 10  # common pagination step                    params = {"q": kw, "l": loc, "fromage": str(d), "sort": "date", "start": str(start)}                    urls.append(f"{base}?{urlencode(params)}")                plans[(kw, loc, d)] = urls    return plansdef plan_hirist_urls(keywords: List[str], locations: List[str], max_pages: int) -> Dict[Tuple[str, str], List[str]]:    base = "https://www.hirist.com/search/"    plans = {}    for kw in keywords:        for loc in locations:            urls = []            for page in range(1, max_pages + 1):                params = {"query": kw, "location": loc, "page": str(page)}                urls.append(f"{base}?{urlencode(params)}")            plans[(kw, loc)] = urls    return plans# ----------------- Extractor Helpers -----------------def first_text(soup: BeautifulSoup, selectors: List[str]) -> str:    for css in selectors:        el = soup.select_one(css)        if el:            txt = el.get_text(strip=True)            if txt:                return txt    return None# ----------------- Connectors (HTML) -----------------def fetch_naukri_page(url: str, session: requests.Session, timeout: int, keywords: List[str]) -> List[Dict]:    jobs = []    r = get_with_backoff(url, session, timeout)    if not r or r.status_code != 200:        return jobs    soup = BeautifulSoup(r.text, "html.parser")    cards = soup.select("div.jobTuple")    if not cards:  # selector changed or empty page        return jobs    for c in cards:        title_el = c.select_one("a.title")        comp_el  = c.select_one("a.companyName") or c.select_one("span.company")        loc_el   = c.select_one("span.place")        date_el  = c.select_one("span.jobTuple-job-posted")        title = title_el.get_text(strip=True) if title_el else None        company = comp_el.get_text(strip=True) if comp_el else ""        location = loc_el.get_text(strip=True) if loc_el else None        posted = parse_relative_date(date_el.get_text(strip=True) if date_el else "")        link = title_el.get("href") if title_el and title_el.has_attr("href") else None        if not (title and link):            continue        wm = infer_work_mode(c.get_text(" ", strip=True))        jobs.append({            "source": "naukri",            "title": title,            "company": company,            "location": location,            "work_mode": wm,            "posted_date": posted,            "salary": None,            "experience": None,            "skills": None,            "job_type": None,            "keywords_matched": matched_keywords(title, location or "", keywords),            "link": canonical_link(link)        })    return jobsdef fetch_indeed_page(url: str, session: requests.Session, timeout: int, keywords: List[str]) -> List[Dict]:    jobs = []    r = get_with_backoff(url, session, timeout)    if not r or r.status_code != 200:        return jobs    soup = BeautifulSoup(r.text, "html.parser")    # Prefer modern beacon containers, fallback to a.tapItem    cards = soup.select("div.job_seen_beacon")    if not cards:        anchors = soup.select("a.tapItem")        for a in anchors:            title = first_text(a, ["h2.jobTitle", "a.jcs-JobTitle"]) or norm_space(a.get_text(" ", strip=True).split("\n")[0])            href = a.get("href")            link = urljoin("https://in.indeed.com", href) if href else None            comp = first_text(a, ["span.companyName"])            loc  = first_text(a, ["div.companyLocation"])            date = first_text(a, ["span.date"])            posted = parse_relative_date(date) if date else None            if not (title and link):                continue            wm = infer_work_mode(a.get_text(" ", strip=True))            jobs.append({                "source": "indeed",                "title": title,                "company": comp or "",                "location": loc,                "work_mode": wm,                "posted_date": posted,                "salary": None,                "experience": None,                "skills": None,                "job_type": None,                "keywords_matched": matched_keywords(title, loc or "", keywords),                "link": canonical_link(link)            })        return jobs    # Normal card extraction    for c in cards:        title = first_text(c, ["h2.jobTitle a", "h2.jobTitle", "a.jcs-JobTitle"])        a = c.select_one("h2.jobTitle a") or c.select_one("a.jcs-JobTitle") or c.select_one("a.tapItem")        href = a.get("href") if a and a.has_attr("href") else None        link = urljoin("https://in.indeed.com", href) if href else None        comp = first_text(c, ["span.companyName", ".companyInfo .companyName"])        loc  = first_text(c, ["div.companyLocation", "div.companyLocation > span"])        date = first_text(c, ["span.date"])        posted = parse_relative_date(date) if date else None        if not (title and link):            continue        wm = infer_work_mode(c.get_text(" ", strip=True))        jobs.append({            "source": "indeed",            "title": title,            "company": comp or "",            "location": loc,            "work_mode": wm,            "posted_date": posted,            "salary": None,            "experience": None,            "skills": None,            "job_type": None,            "keywords_matched": matched_keywords(title, loc or "", keywords),            "link": canonical_link(link)        })    return jobsdef fetch_hirist_page(url: str, session: requests.Session, timeout: int, keywords: List[str]) -> List[Dict]:    jobs = []    r = get_with_backoff(url, session, timeout)    if not r or r.status_code != 200:        return jobs    soup = BeautifulSoup(r.text, "html.parser")    # Try common classes    cards = soup.select(".job-card")    if not cards:        cards = soup.select(".job")    # Fallback heuristic    if not cards:        container = soup.select_one("#results") or soup.select_one(".results")        if container:            for a in container.select("a"):                title = norm_space(a.get_text(" ", strip=True))                href = a.get("href")                if not href or not title or len(title) < 6:                    continue                if "/job/" in href:                    link = urljoin("https://www.hirist.com", href)                    wm = infer_work_mode(a.get_text(" ", strip=True))                    jobs.append({                        "source": "hirist",                        "title": title,                        "company": "",                        "location": None,                        "work_mode": wm,                        "posted_date": None,                        "salary": None,                        "experience": None,                        "skills": None,                        "job_type": None,                        "keywords_matched": matched_keywords(title, "", keywords),                        "link": canonical_link(link)                    })        return jobs    # Normal extraction    for c in cards:        title = first_text(c, ["a.job-title", "h3"])        href_el = c.select_one("a.job-title") or c.select_one("a")        href = href_el.get("href") if (href_el and href_el.has_attr("href")) else None        link = urljoin("https://www.hirist.com", href) if href else None        comp = first_text(c, [".company", ".company-name"])        loc  = first_text(c, [".location"])        date = first_text(c, [".posted-date", ".posted"])        posted = parse_relative_date(date) if date else None        if not (title and link):            continue        wm = infer_work_mode(c.get_text(" ", strip=True))        jobs.append({            "source": "hirist",            "title": title,            "company": comp or "",            "location": loc,            "work_mode": wm,            "posted_date": posted,            "salary": None,            "experience": None,            "skills": None,            "job_type": None,            "keywords_matched": matched_keywords(title, loc or "", keywords),            "link": canonical_link(link)        })    return jobs# ----------------- ATS JSON (Optional, Public & Safe) -----------------def greenhouse_fetch(company_shortname: str, session: requests.Session, timeout: int, keywords: List[str]) -> List[Dict]:    url = f"https://boards-api.greenhouse.io/v1/boards/{company_shortname}/jobs"    jobs = []    r = get_with_backoff(url, session, timeout)    if not r or r.status_code != 200:        return jobs    try:        data = r.json()    except Exception:        return jobs    for j in data.get("jobs", []):        title = j.get("title")        loc   = (j.get("location") or {}).get("name")        link  = j.get("absolute_url")        posted = (j.get("updated_at") or "")[:10] or None        if not (title and link):            continue        jobs.append({            "source": "greenhouse",            "title": title,            "company": company_shortname,            "location": loc,            "work_mode": None,            "posted_date": posted,            "salary": None,            "experience": None,            "skills": None,            "job_type": None,            "keywords_matched": matched_keywords(title, loc or "", keywords),            "link": canonical_link(link)        })    return jobsdef lever_fetch(company_slug: str, session: requests.Session, timeout: int, keywords: List[str]) -> List[Dict]:    url = f"https://api.lever.co/v0/postings/{company_slug}?mode=json"    jobs = []    r = get_with_backoff(url, session, timeout)    if not r or r.status_code != 200:        return jobs    try:        data = r.json()    except Exception:        return jobs    for j in data:        title = j.get("text")        loc   = (j.get("categories") or {}).get("location")        link  = j.get("hostedUrl")        created = j.get("createdAt")        posted = None        if created:            try:                posted = datetime.utcfromtimestamp(created/1000).date().isoformat()            except Exception:                posted = None        if not (title and link):            continue        jobs.append({            "source": "lever",            "title": title,            "company": company_slug,            "location": loc,            "work_mode": None,            "posted_date": posted,            "salary": None,            "experience": None,            "skills": None,            "job_type": None,            "keywords_matched": matched_keywords(title, loc or "", keywords),            "link": canonical_link(link)        })    return jobs# ----------------- Dedup / Score -----------------def dedup_jobs(items: List[Dict]) -> List[Dict]:    seen = set(); out = []    for j in items:        uid = job_uid(j.get("company",""), j.get("title",""), j.get("location",""), j.get("link",""))        if uid in seen:            continue        seen.add(uid)        j["job_id"] = uid        out.append(j)    return outdef recency_component(posted_date: str) -> float:    if not posted_date:        return 0.0    try:        d = datetime.fromisoformat(posted_date)        days = (datetime.utcnow().date() - d.date()).days        if days <= 1: return 1.0        if days <= 7: return 0.7        if days <= 30: return 0.4        return 0.1    except Exception:        return 0.0def score_job(j: Dict, source_weight: Dict[str, float], preferred_companies: Dict[str, float]) -> float:    score = recency_component(j.get("posted_date"))    score += 0.1 * len(j.get("keywords_matched", []))    score += source_weight.get(j.get("source",""), 0.0)    comp = (j.get("company") or "").lower()    for k, w in preferred_companies.items():        if k in comp:            score += w            break    return round(min(score, 2.0), 2)# ----------------- Persistence & Metrics -----------------def load_seen(path: str) -> set:    if os.path.exists(path):        try:            return set(json.load(open(path, "r", encoding="utf-8")))        except Exception:            return set()    return set()def save_seen(path: str, seen: set):    json.dump(list(seen), open(path, "w", encoding="utf-8"))def save_outputs(items: List[Dict], json_out: str, csv_out: str):    # JSON    with open(json_out, "w", encoding="utf-8") as f:        json.dump(items, f, ensure_ascii=False, indent=2)    # CSV    cols = ["job_id","source","job_title","company","location","work_mode",            "posted_date","salary","experience","skills","job_type",            "keywords_matched","score","job_link"]    with open(csv_out, "w", newline="", encoding="utf-8") as f:        w = csv.DictWriter(f, fieldnames=cols)        w.writeheader()        for j in items:            row = {                "job_id": j.get("job_id"),                "source": j.get("source"),                "job_title": safe_csv_value(j.get("title","")),                "company": safe_csv_value(j.get("company","")),                "location": j.get("location"),                "work_mode": j.get("work_mode"),                "posted_date": j.get("posted_date"),                "salary": j.get("salary"),                "experience": j.get("experience"),                "skills": j.get("skills"),                "job_type": j.get("job_type"),                "keywords_matched": ";".join(j.get("keywords_matched", [])),                "score": j.get("score"),                "job_link": j.get("link"),            }            w.writerow(row)def write_metrics(metrics: dict, metrics_out: str):    json.dump(metrics, open(metrics_out, "w", encoding="utf-8"), ensure_ascii=False, indent=2)# ----------------- Orchestration with Adaptive Paging -----------------def run_grouped_urls(plans: Dict, fetch_fn, session, timeout, keywords, adaptive_max_empty: int, metrics_bucket: dict):    """    plans: dict[group_key -> list[urls]]    fetch_fn: function(url, session, timeout, keywords) -> list[dict]    metrics_bucket: updates 'planned', 'non_empty_pages', 'jobs'    """    total_jobs = 0    for group_key, urls in plans.items():        metrics_bucket["planned"] += len(urls)        empty_streak = 0        for url in urls:            rows = fetch_fn(url, session, timeout, keywords)            if rows:                metrics_bucket["non_empty_pages"] += 1                total_jobs += len(rows)                metrics_bucket["jobs"] += len(rows)                yield rows                empty_streak = 0            else:                empty_streak += 1                if empty_streak >= adaptive_max_empty:                    # stop early for this group (low-yield)                    break            # politeness delay            time.sleep(random.uniform(*DEFAULTS["request_delay_range"]))    # end    return# ----------------- CLI & Main -----------------def parse_args():    ap = argparse.ArgumentParser(description="Public-only job sourcing pipeline v2")    ap.add_argument("--config", default=None, help="Path to config.json (optional)")    ap.add_argument("--json-out", default="jobs.json", help="Output JSON file")    ap.add_argument("--csv-out", default="jobs.csv", help="Output CSV file")    ap.add_argument("--metrics-out", default="metrics.json", help="Output metrics JSON file")    ap.add_argument("--seen", default="seen_ids.json", help="Path to seen_ids.json")    ap.add_argument("--no-incremental", action="store_true", help="Emit all jobs (ignore seen_ids)")    return ap.parse_args()def main():    args = parse_args()    cfg = load_config(args.config)    # Update delay range default in this runtime (used in run_grouped_urls)    DEFAULTS["request_delay_range"] = cfg.get("request_delay_range", DEFAULTS["request_delay_range"])    session = make_session()    timeout = cfg.get("timeout", 20)    keywords = cfg["keywords"]    locations = cfg["locations"]    recency_days = cfg["recency_days"]    max_pages = cfg["max_pages"]    adaptive_max_empty = cfg.get("adaptive_max_empty_pages", 2)    metrics = {        "run_ts_utc": datetime.utcnow().isoformat(),        "naukri": {"planned":0, "non_empty_pages":0, "jobs":0},        "indeed": {"planned":0, "non_empty_pages":0, "jobs":0},        "hirist": {"planned":0, "non_empty_pages":0, "jobs":0},        "greenhouse": {"companies": len(cfg.get("greenhouse_companies", [])), "jobs":0},        "lever": {"companies": len(cfg.get("lever_companies", [])), "jobs":0}    }    # 1) Plan URLs (grouped for adaptive paging)    naukri_plans = plan_naukri_urls(keywords, locations, max_pages["naukri"])    indeed_plans = plan_indeed_urls(keywords, locations, recency_days, max_pages["indeed"])    hirist_plans = plan_hirist_urls(keywords, locations, max_pages["hirist"])    logging.info("Planned URLs -> Naukri: %d groups, Indeed: %d groups, Hirist: %d groups",                 len(naukri_plans), len(indeed_plans), len(hirist_plans))    # 2) Fetch    all_jobs = []    # Naukri    for rows in run_grouped_urls(naukri_plans, fetch_naukri_page, session, timeout, keywords, adaptive_max_empty, metrics["naukri"]):        all_jobs.extend(rows)    # Indeed    for rows in run_grouped_urls(indeed_plans, fetch_indeed_page, session, timeout, keywords, adaptive_max_empty, metrics["indeed"]):        all_jobs.extend(rows)    # Hirist    for rows in run_grouped_urls(hirist_plans, fetch_hirist_page, session, timeout, keywords, adaptive_max_empty, metrics["hirist"]):        all_jobs.extend(rows)    # Optional ATS JSON (safe & public)    for gh in cfg.get("greenhouse_companies", []):        items = greenhouse_fetch(gh, session, timeout, keywords)        metrics["greenhouse"]["jobs"] += len(items)        all_jobs.extend(items)    for lv in cfg.get("lever_companies", []):        items = lever_fetch(lv, session, timeout, keywords)        metrics["lever"]["jobs"] += len(items)        all_jobs.extend(items)    # 3) Deduplicate    uniq = dedup_jobs(all_jobs)    # 4) Scoring    source_weight = cfg.get("source_weight", DEFAULTS["source_weight"])    preferred_companies = cfg.get("preferred_companies", DEFAULTS["preferred_companies"])    for j in uniq:        j["score"] = score_job(j, source_weight, preferred_companies)    # 5) Incremental (optional)    if not args.no_incremental:        seen = load_seen(args.seen)        new_items = []        for j in uniq:            if j["job_id"] not in seen:                new_items.append(j)                seen.add(j["job_id"])        save_seen(args.seen, seen)        final = new_items        logging.info("Incremental mode: %d new of %d unique total", len(final), len(uniq))    else:        final = uniq        logging.info("No-incremental mode: emitting all %d unique jobs", len(final))    # Sort for readability: score desc, then posted_date desc    final.sort(key=lambda x: (x.get("score", 0.0), x.get("posted_date") or ""), reverse=True)    # 6) Outputs    save_outputs(final, args.json_out, args.csv_out)    write_metrics(metrics, args.metrics_out)    logging.info("DONE. Jobs: %d (unique %d, emitted %d). Files -> %s, %s, %s",                 len(all_jobs), len(uniq), len(final), args.json_out, args.csv_out, args.metrics_out)if __name__ == "__main__":    main()Show more lines
+
+8) Troubleshooting
+
+
+0 results from a source
+
+Reduce combinations: use fewer keywords or locations
+Increase recency_days (e.g., use [7, 14])
+Update selectors (sites change HTML often)
+
+
+
+429/403 frequently
+
+Increase request_delay_range, reduce max_pages
+Ensure you don’t hit job detail pages; only list pages
+
+
+
+Duplicates slipping through
+
+Add more aggressive canonicalization per source (e.g., unify Naukri IDs if present)
+
+
+
+Wrong work mode
+
+Expand phrase lists and negatives in infer_work_mode()
+
+
+
+You need only “delta”
+
+Keep the default incremental mode (uses seen_ids.json) and consume current run output only
+
+
+
+
+9) Notes on Respectful Use
+
+This pipeline targets public list pages & public JSON endpoints.
+Do not log in or bypass protections.
+Throttle requests and stop on low‑yield pages.
+Review each site’s robots.txt and Terms; avoid scraping detail pages in bulk.
+
+
+Want me to tailor config.json for your exact keywords/locations or add one more board (e.g., Foundit) in the same style?
