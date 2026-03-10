@@ -1,0 +1,1026 @@
+company :  A Snapshot
+of Gemini’s
+Culture!
+At Gemini, our philosophy is simple yet
+powerful, “We do common things
+uncommonly well.”
+It reflects who we are and how we work, combining everyday brilliance with an
+uncommon passion for excellence. We’re a community of innovators, problemsolvers, and dreamers who believe in growing together, supporting one another, and
+building meaningful impact through technology.
+What You’ll Find in This Handbook
+Global Exposure & Growth Health & Wellness
+Continuous Learning Culture & Connection
+Flexible Work Model Leave & Time Off
+Financial Wellbeing Referral Program
+GEMINI SOLUTIONS 01
+
+About Gemini
+What We Do
+At Gemini, teams are involved in:
+• Building and enhancing enterprise-grade digital products
+• Applying data, analytics, and AI to support business decision-making
+• Designing, deploying, and operating secure cloud-native platforms
+• Ensuring quality, scalability, and operational stability of systems
+Industry Focus and Clients
+We have partnered with over 35 clients across BFSI (Capital Markets, Banking, and
+Insurance), Real Estate, Healthcare, and startups. Our client relationships are long-term
+and based on consistent delivery, deep domain expertise, and a strong culture of trust.
+Our experience includes delivering enterprise-scale initiatives such as Agentic AI
+solutions for corporate customer onboarding, AI support bots for operational and
+client-facing use cases, wealth management solutions for portfolio optimization,
+automated test case and test data generation, trade and order management
+validation, and AI-driven risk forecasting and collections optimization, all executed
+within regulated, high-availability environments.
+How We Deliver Excellence
+Our success is driven by key accelerators centered on lean governance, rapid
+scaling, and agility. This approach allows us to integrate seamlessly with client
+teams, make faster decisions, and respond effectively to evolving business and
+industry needs.
+Delivery is supported by a structured yet flexible framework, including:
+• A Delivery Council focused on execution discipline and client success
+• An Engineering Council focused on technical excellence, standards, & best
+practices
+This ensures teams gain first-hand exposure to how high-quality engineering and
+delivery operate in real production environments.
+ GEMINI SOLUTIONS 02
+1. Global Exposure & Growth Opportunities
+We believe true growth comes from experiences that go beyond
+borders. At Gemini, you’ll find onshore opportunities to work with
+global teams, learn from diverse perspectives, and make a tangible
+impact on projects that shape industries worldwide.
+Our people-first approach ensures that every career path is unique,
+supported by mentorship, meaningful work, and continuous
+feedback.
+2. Continuous Learning & Certifications
+At Gemini, growth is a shared journey.
+Access Gem University – our in-house learning ecosystem with
+online modules, classroom programs, and leadership courses.
+Take part in company-sponsored certification programs
+designed to strengthen your technical and professional edge
+(as per company policy).
+Because here, we don’t just learn to work — we work to keep
+learning.
+3. Work Model That Works for You
+Flexibility is part of how we operate. Our Hybrid Work Model gives
+you the best of both worlds, three days from the office for
+collaboration and connection, and two days working remotely for
+focus and balance.
+We encourage balance through flexible hours, casual wear culture,
+and compensatory offs, so you can give your best — at work and
+beyond it. We trust our people to manage their time and deliver with
+ownership.
+GEMINI SOLUTIONS 03
+4. Financial Wellbeing That Cares
+We understand that peace of mind begins with financial stability,
+the3re fore we provide the following benefits:
+Advance Salary Support for urgent financial needs.
+Loan Assistance for personal or medical emergencies.
+Tax-Saving Benefits including Sodexo wallet, LTA, and
+reimbursements.
+Retirement Benefits through Provident Fund and Gratuity,
+ensuring your future is as secure as your present.
+5. Health and wellness always first
+We offer comprehensive medical insurance for you and your
+family, along with a range of wellness initiatives like yoga, Zumba,
+and many other fun sessions. Our in-house food facilities promote
+healthy eating, ensuring you stay energized and focused
+throughout the day.
+6. Culture That Connects Us
+We believe the best work happens when people feel connected
+and inspired. From annual offsites and festive celebrations to
+Adventure, CSR, Sports Clubs, and various other clubs there’s always
+something to look forward to at Gemini.
+GEMINI SOLUTIONS 04
+7. Leaves That Let You Live Fully
+Life happens outside work too. That’s why we offer a holistic leave
+structure:
+Privilege Leaves (carry-forward option)
+Casual & Sick Leaves
+Maternity & Paternity Leave
+Bereavement Leaves
+8. Referral Program
+We grow best when we grow together. Our Refer & Earn
+Program lets you recommend exceptional talent and get
+rewarded when they join the Gemini family.
+Your Journey Starts Here
+Gemini is more than a workplace, it’s a space to explore your potential, learn
+endlessly, and create impact with purpose.
+Contact Information:
+Website www.geminisolutions.com
+Follow us on
+GEMINI SOLUTIONS 05
+
+
+job profile : Celebrating 13 Glorious Years!
+Gemini Solutions is a global IT consulting firm and a leading offshore outsourcing company with an
+expertise in BFSI domain. Founded and owned by IIT Delhi and IIIT Hyderabad alumni, Gemini has
+grown from 4 people to a mid-sized company of 1000+ members, doubling in the last three years. We are
+present at 6 locations in India, and in US, Canada & Middle East. You are looking at a debt-free firm
+with a 25% CAGR of revenue/profits for the past 4 years.
+We have expertise across each part of the entire Software Development Life Cycle - Development,
+Quality Assurance, 24x7 DevOps and also Infrastructure/Managed Services. Today we can boast of
+experts in 60+ technologies who have successfully delivered globally distributed projects including but
+not limited to application development, legacy to cloud migrations, tech stack transitions, capacity
+planning & infrastructure support and end-to-end implementations.
+People first approach has been a cornerstone of the Gemini governance philosophy. Our young talent is
+handpicked from Tier I & II colleges of India. A fresher would undergo over 300 hours of in-depth
+training and mentoring to make her/him a reliable problem solver. We encourage external certifications
+for all employees and our in-house Gem University offers over 100 courses across skills and technologies.
+Here you can choose different ways to lead your growth. We believe businesses can grow with a
+conscience and succeed with it. We welcome you to our Gemini ecosystem that unites software,
+education, and community to help businesses grow better. Take a sneak peek at our culture here:
+https://www.youtube.com/watch?v=kEqIgVaE0b4&t=24s
+DevOps Engineer
+Location- Gurgaon
+Celebrating 13 Glorious Years!
+Position Overview:
+We are seeking a highly skilled and experienced Senior DevOps Engineer to join our team. As a Senior
+DevOps Engineer, you will be responsible for designing, implementing, and maintaining our
+infrastructure and CI/CD pipelines. Your expertise will be critical in ensuring the reliability, scalability,
+and security of our software products and services. With your extensive knowledge of DevOps principles
+and practices, you will play a key role in driving our continuous improvement efforts.
+Responsibilities:
+➢ Design, develop, and maintain our infrastructure and deployment pipelines, ensuring
+scalability, availability, and performance of our applications.
+➢ Collaborate with cross-functional teams, including development, operations, and QA, to define
+and implement CI/CD processes and best practices.
+➢ Automate and streamline build, deployment, and release processes, utilizing toolssuch as
+Jenkins, GitLab CI/CD, or similar.
+➢ Configure, monitor, and manage cloud infrastructure and services (e.g., AWS, Azure, Google
+Cloud) to support our applications and services.
+➢ Implement and maintain configuration management tools (e.g., Ansible, Chef, Puppet) to ensure
+consistent and reproducible environments.
+➢ Monitor system performance and identify areas for optimization, ensuring high availability and
+reliability.
+➢ Collaborate with development teams to improve application deployment architecture,
+ensuring efficient resource utilization and scalability.
+➢ Implement and maintain security practices and measures, including vulnerability assessment,
+penetration testing, and access controls.
+➢ Troubleshoot and resolve infrastructure and deployment issues, working closely with crossfunctional teams to minimize downtime and impact on operations.
+➢ Stay up to date with industry trends and advancements in DevOps tools and practices,
+recommending and implementing improvementsto enhance efficiency and productivity.
+Qualifications:
+➢ Bachelor's degree in computer science, engineering, or a related field. Advanced degree is a plus.
+➢ Minimum of 2 years of experience in a DevOps or related role, with a strong focus on
+infrastructure and CI/CD pipeline management.
+➢ Extensive hands-on experience with Azure cloud platforms
+➢ Proficiency in scripting and automation using languages such as Python, groovy, bash
+➢ In-depth knowledge of CI/CD tools like Jenkins, GitLab CI/CD, or similar, and experience
+implementing and maintaining pipelines.
+➢ Strong understanding of configuration management tools (e.g., Ansible) and infrastructure- as-code
+principles (e.g., Terraform).
+Celebrating 13 Glorious Years!
+➢ Solid understanding of networking concepts, security best practices, and experience
+implementing security controls in cloud environments.
+➢ Experience with containerization technologies(e.g., Docker, Kubernetes) and orchestration
+frameworks.
+➢ Understanding on GitOps processes and Flux CD
+➢ Proven track record of troubleshooting complex infrastructure and deployment issues and
+implementing scalable solutions.
+➢ Excellent communication and collaboration skills, with the ability to work effectively in crossfunctional teams
+WHERE ELSE YOU CAN FIND US
+www.geminisolutions.com
+@gemini.solutions
+Gemini Solutions Pvt Ltd
+@gemsolindia
+@GeminiIndia
+Gemini Solutions
+
+
+
+My applied resume which interviewer will check : ALOK GARG
+Production Support / MFT Operations Engineer
++91 8306718442 alokgarg003@gmail.com
+Professional Summary
+Production Support Engineer with hands-on experience in enterprise Managed File Transfer (GoAnywhere MFT) and Linux-based file
+workflows. Skilled in triaging high-volume alerts, resolving issues within SLA, improving MTTA/MTTR, and creating clear SOPs and
+runbooks. Designed a Python + Streamlit insights tool that analyzes ~2 years of ServiceNow incidents, classifies recurring errors,
+detects patterns, and generates Excel/CSV/PNG/Markdown reports. Strong log analysis, regex, pandas, YAML, cron,
+permissions/ACLs, and incident problem-solving. Comfortable with on-call support, cross-team communication, and daily tools like
+ServiceNow, Microsoft 365, Citrix, PuTTY, WinSCP, and MOVEit.
+Experience
+Capgemini : Application Support Engineer (Client: Royal Mail Group) Oct 2024 – Present
+• Manage daily production workflows involving PULL → MOVE → PUSH file-transfer cycles across Linux servers using
+GoAnywhere MFT, FMS, and FTG, including log-based diagnosis, SQL-based validation, and coordination with multiple
+tech teams to restore services within SLA during peak-season load.
+• Improved alert quality by creating a standardized error taxonomy, fixing misaligned cron schedules, adding file-pattern
+validations, and performing outbound directory housekeeping for decommissioned or misconfigured partners.
+• Authored clear and reusable SOPs, KB articles, and troubleshooting runbooks covering permission denials,
+workspace/process locks, mismatched file masks, stale or stuck directory scenarios, SFTP connectivity issues, and
+configuration gaps.
+• Own end-to-end ServiceNow Incident, Change, and Problem Management, support the on-call rotation, and prepare
+CAB documentation with complete impact and risk assessments.
+➢ SELECTED WINS
+• Resolved a high-frequency stuck-file issue by identifying an incorrect file pattern (PREDES_414D* → PREDES_000034*)
+and implementing a housekeeping/quarantine mechanism for unexpected inbound patterns — preventing pipeline
+blockage and improving flow stability.
+• Reduced investigation time for daily P1/P2 tickets by building Snow Incident AI, a Python/Streamlit tool that
+auto-analyses ServiceNow incidents and highlights recurring issues by interface, file path, error category, and
+hour-of-day, enabling faster RCA and operational forecasting.
+Celebal Technologies : Junior Cloud Engineer Intern July 2023 – Aug 2023
+• Built foundational skills in cloud infrastructure, virtualization, networking (TCP/UDP, OSI model), IAM, and system
+design through hands-on labs and shadowing senior engineers.
+• Gained exposure to cloud-native components including API Gateways, Load Balancers, Storage Accounts/Buckets,
+VMs, and Monitoring tools used in modern distributed architectures.
+• Assisted in backend support activities such as configuring test environments, validating API responses, reviewing
+logs, and performing basic debugging under supervision.
+• Practiced system monitoring and health checks in a simulated enterprise environment, learning how to identify
+latency issues, connectivity failures, and access misconfigurations.
+• Supported small cloud deployment exercises, improving understanding of how applications are deployed, scaled,
+secured, and maintained on cloud platforms.
+KEY INITIATIVES & PROJECTS
+➢ Snow Incident AI — Python + Streamlit (Self-Initiated Analytics Platform)
+• Designed and built a config driven analytics tool that processes ~2 years of ServiceNow incidents to identify recurring patterns
+and operational hotspots.
+• Enriched incident data with interface IDs, error families (FMS/FTP/Process alerts), POSIX paths, time grain features, and CI
+taxonomy for high quality insights.
+• Implemented scenario partitioning (stuck files, FTP errors, config issues, file remove failures, callouts, process alerts,
+linkedin.com/in/alok-garg-561a16196/ github.com/alokgarg003
+warnings, misc) with 24 hour recurrence detection. Delivered multi format outputs: Excel (master analytics), CSV matrices (CI
+× error family), PNG charts (monthly trends, Pareto, DOW, hourly heatmaps), and Markdown/JSON summaries.
+o Enabled leads to quickly identify noisy interfaces, peak failure hours, and CI misclassifications, reducing daily triage
+time for the team.
+• Enabled leads to quickly identify noisy interfaces, peak-failure hours, and CI misclassifications, reducing daily triage time
+for the team.
+➢ Recurring Error Catalogue — Central Operational Knowledge Base
+• Built a structured knowledge repository that standardizes triage for daily FMS/FTG alerts.
+• Documented interface-wise recurring issues, including category, root cause, resolution/no-action, criticality, frequency,
+ownership, and business impact.
+• Reduced repetitive investigations by providing consistent, reference-ready RCA summaries for on-call engineers.
+• Enabled faster, more accurate ticket closures and reduced noise from predictable/benign issues.
+➢ GoAnywhere “Permission Denied” (MFTERR03) — SOP & Alert Noise Reduction
+• Created a comprehensive SOP and noise-suppression strategy for repeated GoAnywhere permission-denied alerts across
+Print Flow data, Print Filenames, and Print FileTrack pipelines.
+• Analyzed transient workspace/contention issues such as log-write conflicts, Azure Files concurrency locks, and shared
+workspace blocking; confirmed all were logging-only failures with successful transfers.
+• Recommended technical improvements:
+o Switch to echo-based non-blocking logging
+o Enable duplicate-event suppression (NE/WE de-dup)
+o Auto-resolve conditions for transient workspace locks
+• Reduced unnecessary escalations and minimized false-positive alerts from MFTERR03
+CORE SKILLS
+➢ MFT & Linux : GoAnywhere MFT (Projects, Monitors, Schedulers, Triggers, Completed Jobs), SSH/SFTP/SCP, POSIX paths,
+Linux file permissions/ACLs, namei traversal, setfacl, workspace directories, cron scheduling.
+➢ Ops & ITIL: ServiceNow (Incident / Problem / Change), SLA adherence, MTTR/MTTD improvement, RCA, runbooks, SOPs,
+KB documentation, on‑call / 24×7 support, CAB participation.
+➢ Automation & Data: Bash scripting, Python (pandas, regex), Streamlit dashboards, YAML configuration, Excel-based
+analytics, CSV/JSON/Markdown reporting.
+➢ Diagnostics & Observability : Log analysis, pattern detection, stuck‑file triage, permission‑denied debugging,
+pattern‑guard logic, recurrence pair detection, CI × error‑family matrices, Pareto charts, DOW/hour heatmaps.
+➢ DevOps Tooling: Azure DevOps (Repos / PRs / Pipelines), Jenkins, Git/Bitbucket, Confluence, Jira.
+➢ Familiar & Daily Tools: SQL for triage, basic Azure/AWS, REST/JSON, Postman, ServiceNow, Microsoft 365
+(Excel/Outlook/Teams), Citrix, PuTTY, WinSCP, MOVEit, Postman. Logging,ELK(Elasticsearch + Logstash + Kibana)
+Education
+Centre for Development of Advanced Computing (CDAC), Bangalore Mar 2024 – Aug 2024
+Postgraduate Diploma in Advanced Computing (DAC)
+Poornima Institute of Engineering and Technology, Jaipur Aug 2019 – May 2023
+B.Tech in Computer Science & Engineering CGPA: 7.29/10
+Certifications
+➢ Azure AI Engineer Associate (AI102)
+➢ Azure AI Fundamentals: View
+Certificate
+➢ AWS Generative AI: View
+Certificate
+➢ React-Redux: View Certificate
+
+
+
+
+
+Note : hi chatgpt today is 10 march 2026 and I had interview on Thursday 12 2026 at 12 pm morning so here I need guidance for better smart interview prepration as you see what I mention in my resume and what job profile he is hiring that match only 30 to 40 percent but I am pretty sure I will good fit for this role once I selected because basic concepts I know so could you please guide like what should I do first or learn a full indepth topic list which I need to cover before interview what type of question this company ask for this role previously or whats cross question interviewer may ask from my resume or job description or what selecting criteria they may be check 
+
+
+
+
+
+
+
+
+You have **~48 hours before the interview (12 March, 12 PM)**.
+Your goal is **not to become a DevOps expert in 2 days**, but to **position your existing Production Support + MFT + Linux + automation experience as DevOps-aligned**.
+
+Right now your profile matches roughly **35–40%**, but with correct framing you can **appear 65–70% aligned**.
+
+I will break this into a **precise preparation strategy**.
+
+---
+
+# 1. What Gemini Will Actually Evaluate
+
+The company profile suggests they are a **BFSI-focused consulting firm** building **enterprise cloud systems**.
+
+For this role they will evaluate **5 core signals**.
+
+| Signal                       | What They Want                       |
+| ---------------------------- | ------------------------------------ |
+| Infrastructure understanding | Linux, networking, deployment basics |
+| Automation mindset           | scripting, pipelines                 |
+| Cloud familiarity            | Azure mainly                         |
+| Troubleshooting ability      | real production issue handling       |
+| DevOps culture               | CI/CD, containers, IaC               |
+
+Your **production support + automation work already satisfies many of these**.
+
+Your task: **translate your experience into DevOps language**.
+
+---
+
+# 2. Topics You Must Cover Before Interview
+
+Focus only on **high ROI topics**.
+
+## Tier 1 — MUST KNOW (Highest Probability)
+
+### CI/CD Pipelines
+
+Understand conceptually.
+
+Topics:
+
+* CI vs CD vs Continuous Deployment
+* Pipeline stages
+
+Typical pipeline:
+
+```
+Code → Build → Test → Security Scan → Package → Deploy → Monitor
+```
+
+Key tools:
+
+* Jenkins
+* GitLab CI/CD
+* Azure DevOps pipelines
+
+Understand:
+
+**Example Jenkins pipeline**
+
+```
+Build
+Unit Test
+Docker Build
+Push to Registry
+Deploy to Kubernetes
+```
+
+Possible question:
+
+> How would you design a CI/CD pipeline?
+
+Answer structure:
+
+1. Code commit triggers pipeline
+2. Build artifact
+3. Run tests
+4. Containerize
+5. Push to registry
+6. Deploy via Kubernetes / VM
+7. Monitoring
+
+---
+
+### Containers
+
+Understand difference:
+
+| VM           | Container     |
+| ------------ | ------------- |
+| Full OS      | Shared kernel |
+| Heavy        | Lightweight   |
+| Slow startup | Fast          |
+
+Tools:
+
+* Docker
+* Kubernetes
+
+Important concepts:
+
+Dockerfile
+
+```
+FROM openjdk:17
+COPY app.jar /app.jar
+CMD ["java","-jar","/app.jar"]
+```
+
+Kubernetes basics:
+
+* Pod
+* Deployment
+* Service
+* Replica
+* Scaling
+
+---
+
+### Infrastructure as Code
+
+Tools:
+
+* Terraform
+* ARM templates
+* Ansible
+
+Concept:
+
+Instead of manually creating servers, you define infrastructure in code.
+
+Example Terraform:
+
+```
+resource "azurerm_linux_virtual_machine" "example" {
+  name = "dev-vm"
+}
+```
+
+---
+
+### Azure Basics (Very Important)
+
+Since JD mentions **Azure strongly**, know these:
+
+Core services:
+
+| Service                  | Purpose     |
+| ------------------------ | ----------- |
+| Azure VM                 | compute     |
+| Azure Storage            | files/blobs |
+| Azure Kubernetes Service | containers  |
+| Azure DevOps             | pipelines   |
+| Azure Monitor            | logging     |
+
+Also know:
+
+* Resource Groups
+* IAM
+* Virtual Networks
+
+---
+
+### DevOps Monitoring
+
+Tools:
+
+* Prometheus
+* Grafana
+* ELK
+* Azure Monitor
+
+Explain concept:
+
+Metrics + Logs + Alerts.
+
+You already do **log analysis**, which is a **DevOps strength**.
+
+---
+
+# 3. Strong Resume Talking Points (Very Important)
+
+Interviewers will **dig into your projects deeply**.
+
+Your strongest content:
+
+### Snow Incident AI Tool
+
+Expect questions like:
+
+**Q: Why did you build this tool?**
+
+Answer:
+
+> Our team handled recurring incidents daily. I noticed patterns but there was no centralized analytics. So I built a Python + Streamlit tool that analyzes ~2 years of ServiceNow incidents, classifies errors, and identifies high-frequency failure patterns.
+
+---
+
+**Q: What problems did it solve?**
+
+Answer:
+
+* reduced daily triage time
+* identified noisy interfaces
+* enabled proactive RCA
+* improved operational visibility
+
+---
+
+**Q: What technologies did you use?**
+
+You should say:
+
+* Python
+* Pandas
+* Regex
+* Streamlit
+* Excel analytics
+* visualization
+
+---
+
+# 4. Cross Questions They May Ask
+
+Expect **deep probing questions**.
+
+---
+
+### From your GoAnywhere MFT experience
+
+Possible questions:
+
+**Q: What happens in a file transfer pipeline?**
+
+Explain:
+
+```
+Inbound partner → SFTP
+Validation
+Processing
+Transformation
+Outbound delivery
+Logging
+Monitoring
+```
+
+---
+
+**Q: How do you troubleshoot file transfer failures?**
+
+Answer structure:
+
+1. Check logs
+2. Validate file permissions
+3. Check file pattern
+4. Network connectivity
+5. Disk space
+6. retry mechanism
+
+---
+
+### Linux Questions
+
+Very likely.
+
+Examples:
+
+**Permission debugging**
+
+```
+ls -l
+namei -l
+chmod
+chown
+setfacl
+```
+
+---
+
+### Cron
+
+Example question:
+
+```
+0 2 * * *
+```
+
+Answer:
+
+Runs **2 AM every day**.
+
+---
+
+### Networking
+
+Common questions:
+
+What is difference between:
+
+| Protocol | Use            |
+| -------- | -------------- |
+| FTP      | unsecure       |
+| SFTP     | SSH based      |
+| FTPS     | TLS encryption |
+| AS2      | EDI transfer   |
+
+You already use these.
+
+---
+
+# 5. Smart Story To Position Yourself
+
+If they say:
+
+> You don't have strong DevOps experience
+
+Use this answer:
+
+> My primary role has been production engineering for enterprise file transfer systems. In that role I worked deeply with Linux servers, automation scripts, monitoring, CI tools like Jenkins and Azure DevOps, and incident analysis. Many of these responsibilities overlap strongly with DevOps practices — especially reliability, automation, and deployment stability. I am now intentionally transitioning deeper into DevOps engineering.
+
+This answer **positions your experience correctly**.
+
+---
+
+# 6. Questions You Should Ask Them
+
+Good candidates ask good questions.
+
+Ask:
+
+1.
+
+> How mature is your CI/CD pipeline currently?
+
+2.
+
+> Are you primarily deploying containerized workloads or VM-based workloads?
+
+3.
+
+> What monitoring stack do you currently use?
+
+4.
+
+> What are the biggest infrastructure challenges the team is facing right now?
+
+This signals **engineering maturity**.
+
+---
+
+# 7. What Gemini Interview Usually Looks Like
+
+Typical flow:
+
+### Round 1
+
+Technical discussion.
+
+Topics:
+
+* Linux
+* CI/CD
+* cloud basics
+* troubleshooting
+
+---
+
+### Round 2
+
+System thinking.
+
+Example:
+
+> Design deployment pipeline.
+
+---
+
+### Round 3
+
+Cultural / managerial.
+
+---
+
+# 8. Your Biggest Advantage
+
+Your **real production experience**.
+
+Many DevOps candidates only have **course knowledge**.
+
+You have:
+
+* production incidents
+* monitoring
+* log analysis
+* automation
+* enterprise systems
+
+This is **very valuable**.
+
+---
+
+# 9. Your 48 Hour Preparation Plan
+
+Follow this order.
+
+### Day 1 (Tonight)
+
+Study:
+
+1. CI/CD pipelines
+2. Jenkins basics
+3. Docker fundamentals
+4. Kubernetes basics
+
+---
+
+### Day 2
+
+Study:
+
+1. Azure core services
+2. Terraform basics
+3. DevOps monitoring
+4. Linux networking
+
+---
+
+### Last 2 hours before interview
+
+Revise:
+
+* your resume stories
+* Snow Incident AI project
+* GoAnywhere troubleshooting
+
+---
+
+# 10. One Very Important Interview Tip
+
+When answering:
+
+**Always use production examples.**
+
+Example:
+
+Instead of saying:
+
+> I know Linux permissions.
+
+Say:
+
+> In production we faced repeated permission denied errors in GoAnywhere pipelines. I debugged using namei traversal and ACL checks, which helped us identify a workspace locking issue.
+
+That is **a strong engineering answer**.
+
+---
+
+# 11. If You Want, I Can Also Give You
+
+1. **50 most likely DevOps interview questions**
+2. **Gemini-specific interview questions**
+3. **Perfect answers based on your resume**
+4. **How to justify skill gaps confidently**
+5. **DevOps crash course for interviews (2-hour study guide)**
+
+If you want, say:
+
+**"Create Gemini DevOps interview crash guide."**
+
+I'll build a **targeted preparation pack specifically for this interview.**
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------
+
+Below is a **targeted DevOps interview question bank (50 questions)** customized for:
+
+* **Your resume (Production Support + GoAnywhere MFT + Linux + Python automation)**
+* **Gemini Solutions DevOps Engineer role**
+* **Technologies in the JD (Azure, CI/CD, Jenkins, Ansible, Docker, Kubernetes, Terraform)**
+
+The list is structured by **how interviews typically flow**. Focus more on **Sections 1–5**, because those are **very likely to appear**.
+
+---
+
+# 1. Resume-Based Questions (Very High Probability)
+
+Interviewers almost always start here.
+
+### About your role at Capgemini
+
+1. Explain your **daily responsibilities in production support**.
+2. Describe the **PULL → MOVE → PUSH file transfer workflow**.
+3. How does **GoAnywhere MFT architecture work**?
+4. What are **Monitors, Schedulers, and Triggers** in GoAnywhere?
+5. How do you troubleshoot **SFTP connection failures**?
+6. Explain a **P1 production incident you handled**.
+7. How do you **reduce MTTR during incidents**?
+8. How do you perform **log analysis for root cause detection**?
+9. Explain the **PREDES file pattern issue** you solved.
+10. How do you handle **high alert volumes in production systems**?
+
+---
+
+# 2. Project-Based Questions (Snow Incident AI Tool)
+
+Expect **deep probing questions**.
+
+11. Why did you build the **Snow Incident AI tool**?
+12. What **problem did it solve for your team**?
+13. Explain the **architecture of the tool**.
+14. Why did you choose **Streamlit instead of Flask or React**?
+15. How did you classify **error categories**?
+16. How did you detect **recurring incidents**?
+17. What **data preprocessing** steps did you perform?
+18. How did you use **pandas for incident analytics**?
+19. How did your tool improve **operational efficiency**?
+20. If you scale this tool to **10 million incidents**, how would you redesign it?
+
+---
+
+# 3. Linux & System Administration Questions
+
+Very likely because DevOps requires strong Linux.
+
+21. Difference between **chmod, chown, and setfacl**.
+22. How do you debug **permission denied errors**?
+23. Explain **Linux file permission structure (rwx)**.
+24. What does the command **namei -l** do?
+25. What happens when **cron jobs fail**?
+26. Explain this cron expression:
+
+```
+0 3 * * *
+```
+
+27. How do you check **running processes in Linux**?
+28. How do you analyze **large log files** efficiently?
+29. Difference between **soft link and hard link**.
+30. How do you check **disk usage issues**?
+
+---
+
+# 4. CI/CD Pipeline Questions
+
+Core DevOps area.
+
+31. What is **CI/CD**?
+32. Difference between **Continuous Delivery and Continuous Deployment**.
+33. How does a **Jenkins pipeline work**?
+34. What are **pipeline stages**?
+35. What triggers a **CI/CD pipeline**?
+36. What happens if **build fails in pipeline**?
+37. Explain **blue-green deployment**.
+38. Explain **rolling deployment**.
+39. What is **artifact repository**?
+40. How do you secure a CI/CD pipeline?
+
+---
+
+# 5. Cloud & Azure Questions
+
+Gemini JD strongly mentions Azure.
+
+41. What is **Azure Resource Group**?
+42. Difference between **Azure VM and Azure Container Instance**.
+43. What is **Azure Kubernetes Service (AKS)**?
+44. How does **Azure DevOps pipeline work**?
+45. What is **Infrastructure as Code**?
+46. Difference between **Terraform and ARM templates**.
+
+---
+
+# 6. Containers & Kubernetes
+
+Very likely cross-question.
+
+47. What problem does **Docker solve**?
+48. Difference between **Docker container and VM**.
+49. What are **Pods in Kubernetes**?
+50. What happens when a **Kubernetes pod crashes**?
+
+---
+
+# 7. Networking Questions (Common in DevOps Interviews)
+
+They may also ask:
+
+* Difference between **FTP, FTPS, SFTP**
+* What is **SSH handshake**
+* What is **Load Balancer**
+* What is **DNS resolution**
+
+These relate directly to your **MFT work**.
+
+---
+
+# 8. Situational DevOps Questions
+
+These evaluate **real engineering thinking**.
+
+Example:
+
+**Scenario 1**
+
+> A deployment failed in production at midnight. What would you do?
+
+Expected thinking:
+
+1. Check pipeline logs
+2. Identify failure stage
+3. Rollback deployment
+4. Communicate with team
+5. perform root cause analysis
+
+---
+
+**Scenario 2**
+
+> CPU usage suddenly spikes on production servers.
+
+Steps:
+
+1. Check monitoring dashboards
+2. Identify process causing spike
+3. analyze logs
+4. restart service if needed
+5. root cause investigation
+
+---
+
+# 9. Questions They May Ask About Your Career Shift
+
+Because you are moving from **Support → DevOps**.
+
+Possible question:
+
+**Why DevOps?**
+
+Good answer structure:
+
+* production exposure
+* automation mindset
+* infrastructure interest
+* improving deployment reliability
+
+Example answer:
+
+> In production support I was already working with Linux servers, automation scripts, monitoring alerts, and deployment troubleshooting. I realized many of these activities overlap with DevOps practices. That motivated me to deepen my skills in CI/CD, cloud infrastructure, and automation so I can contribute more proactively to system reliability and deployment engineering.
+
+---
+
+# 10. Questions You Must Ask the Interviewer
+
+Strong candidates ask thoughtful questions.
+
+Examples:
+
+1.
+
+> What does the current CI/CD pipeline architecture look like?
+
+2.
+
+> Are your workloads mostly containerized or VM-based?
+
+3.
+
+> What monitoring tools do you use?
+
+4.
+
+> What are the biggest infrastructure challenges the team is facing today?
+
+---
+
+# 11. Hidden Evaluation Criteria
+
+Gemini interviewers will evaluate:
+
+| Skill              | How they test it       |
+| ------------------ | ---------------------- |
+| Problem solving    | production scenarios   |
+| Linux              | commands and debugging |
+| Automation mindset | scripts / pipelines    |
+| Communication      | explaining incidents   |
+| Cloud familiarity  | Azure questions        |
+
+---
+
+# 12. Biggest Tip For Your Interview
+
+**Never give textbook answers.**
+
+Always connect answers with **your production experience**.
+
+Example:
+
+Weak answer:
+
+> Linux permissions control file access.
+
+Strong answer:
+
+> In one of our GoAnywhere pipelines we saw repeated permission-denied alerts. I debugged it using namei traversal and ACL checks, which revealed a workspace locking issue due to concurrent logging operations.
+
+That shows **real engineering experience**.
+
+---
+
+If you want, I can also create a **very powerful final preparation guide**:
+
+**"Gemini DevOps Interview – 2 Day Master Preparation Pack"**
+
+It will include:
+
+* 30 **most dangerous technical questions**
+* **exact answers you should give**
+* **DevOps architecture explanations**
+* **how to convert your support experience into DevOps experience**
+* **smart salary negotiation strategy**
+
+This will significantly increase your **selection probability**.
+
