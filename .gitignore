@@ -1,2 +1,7 @@
 node_modules/
 .env
+__pycache__/
+*/__pycache__/
+*.pyc
+outputs/*.log
+outputs/private_profiles_*.csv
